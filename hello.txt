@@ -6,11 +6,8 @@ git commit -m "testing"
 
 git pull
 
-<<<<<<< HEAD
 
 asbkkasdka
 
 hgeighri
-=======
 git push  
->>>>>>> 86604155abc7c95fb26cb90505bcf3c8cd573560
