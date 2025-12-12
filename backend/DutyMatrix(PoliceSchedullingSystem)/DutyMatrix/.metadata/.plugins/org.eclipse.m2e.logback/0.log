@@ -1,2 +1,0 @@
-2025-12-12 23:27:57,601 [Worker-1: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is not available. Remote download required.
-2025-12-12 23:40:19,461 [ModalContext] INFO  o.e.jgit.transport.TransportHttp - URI 'http://github.com/CDAC-PROJECT-IACSD/DUTYMATRIX.git': following HTTP redirect #0  http://github.com/CDAC-PROJECT-IACSD/DUTYMATRIX.git/ -> https://github.com/CDAC-PROJECT-IACSD/DUTYMATRIX.git/

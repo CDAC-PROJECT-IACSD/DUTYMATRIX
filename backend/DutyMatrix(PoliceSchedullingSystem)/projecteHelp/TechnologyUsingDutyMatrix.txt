@@ -1,2 +1,0 @@
-start.spring.io,
-apache-tomcat
