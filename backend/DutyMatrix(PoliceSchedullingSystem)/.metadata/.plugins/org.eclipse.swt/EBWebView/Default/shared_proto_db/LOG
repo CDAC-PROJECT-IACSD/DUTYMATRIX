@@ -1,2 +1,3 @@
-2025/12/12-22:42:56.937 52f8 Creating DB D:\CDAC_Aug\C_DEC project\DutyMatrix(PoliceSchedullingSystem)\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\shared_proto_db since it was missing.
-2025/12/12-22:42:56.943 52f8 Reusing MANIFEST D:\CDAC_Aug\C_DEC project\DutyMatrix(PoliceSchedullingSystem)\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\shared_proto_db/MANIFEST-000001
+2025/12/12-23:50:03.766 758 Reusing MANIFEST D:\Cdec_Project_Police_Matrix\DUTYMATRIX\backend\DutyMatrix(PoliceSchedullingSystem)\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\shared_proto_db/MANIFEST-000001
+2025/12/12-23:50:03.769 758 Recovering log #3
+2025/12/12-23:50:03.770 758 Reusing old log D:\Cdec_Project_Police_Matrix\DUTYMATRIX\backend\DutyMatrix(PoliceSchedullingSystem)\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\shared_proto_db/000003.log 
