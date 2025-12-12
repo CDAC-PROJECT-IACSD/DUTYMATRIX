@@ -1,6 +1,5 @@
 # DUTYMATRIX
-A comprehensive police duty and shift management system created with **Spring Boot**, **Spring Security (JWT)**, and **MySQL**. This system automates police scheduling, shift assignments, leave requests, and shift swaps to provide fair and transparent duty allocation.
-
+A comprehensive Police Duty Scheduling & FIR Management System built with Spring Boot, Spring Security (JWT), and MySQL. The system streamlines police duty allocation, shift management, and FIR verification workflows, helping officers and station in‑charges coordinate tasks more efficiently while ensuring transparency and proper role‑based access.
  -------------------------------------------------------------------------
 
 ## 📘 Project Overview  
