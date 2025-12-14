@@ -36,8 +36,8 @@ public class Shift {
 	private Date shDate;
 	
 	//station fk
-//	@ManyToOne
-//	@JoinColumn(name="station_id", nullable= false)
-//	private Station station;
+	@ManyToOne
+	@JoinColumn(name="station_id", nullable= false)
+	private Station station;
 	
 }
