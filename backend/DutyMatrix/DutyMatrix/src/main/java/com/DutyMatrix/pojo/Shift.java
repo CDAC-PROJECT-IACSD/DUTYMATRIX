@@ -1,0 +1,43 @@
+package com.DutyMatrix.pojo;
+
+import java.util.Date;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@Entity
+@Table(name= "Shift")
+@NoArgsConstructor
+
+@Setter
+@Getter
+@ToString
+public class Shift {
+
+	@Column(name="shift_id")
+	private int shid;
+	@Enumerated(EnumType.STRING)
+	private ShiftType shtype;
+	@Column(name = "shift_startTime")
+	private Date shStartTime;
+	@Column(name = "shift_endTime")
+	private Date shEndTime;
+	@Column(name = "shift_date")
+	private Date shDate;
+	
+	//station fk
+//	@ManyToOne
+//	@JoinColumn(name="station_id", nullable= false)
+//	private Station station;
+	
+}
