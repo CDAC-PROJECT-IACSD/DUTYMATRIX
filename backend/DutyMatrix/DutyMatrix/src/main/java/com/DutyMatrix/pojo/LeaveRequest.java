@@ -12,37 +12,40 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name= "Shift")
+@Table(name = "LeaveRequest")
 @NoArgsConstructor
 
 @Setter
 @Getter
 @ToString
-public class Shift {
+public class LeaveRequest {
 
-	@Column(name="shift_id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "leaveRequest_id")
 	@Id
-	private int shid;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int lid;
+	@Column(name = "leaveRequest_StartDate")
+	private Date lStatDate;
+	@Column(name = "leaveRequest_EndDate")
+	private Date lEndDate;
 	@Enumerated(EnumType.STRING)
-	private ShiftType shtype;
-	@Column(name = "shift_startTime")
-	private Date shStartTime;
-	@Column(name = "shift_endTime")
-	private Date shEndTime;
-	@Column(name = "shift_date")
-	private Date shDate;
+	private RequestStatus lStatus;
+	@Column(name = "leaveRequest_Reason")
+	private String lReason;
 	
-	//station fk
-	@ManyToOne
-	@JoinColumn(name="station_id", nullable= false)
-	private Station station;
+	//fk
+	// private User lApprovedBy;
+
 	
+	//fk
+//	@JoinColumn(name="userId",nullable= false)
+//	@ManyToOne
+//	private User uid;
+
 }
