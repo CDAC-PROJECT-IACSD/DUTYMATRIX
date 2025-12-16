@@ -2,7 +2,6 @@ package com.DutyMatrix.pojo;
 
 import java.util.Date;
 
-import jakarta.annotation.Generated;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,42 +12,40 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name= "shifts")
+@Table(name = "LeaveRequest")
 @NoArgsConstructor
 
 @Setter
 @Getter
 @ToString
-public class Shift {
+public class LeaveRequest {
 
+	@Column(name = "leaveRequest_id")
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="shift_id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Id
-	private int shid;
-	
+	private int lid;
+	@Column(name = "leaveRequest_StartDate")
+	private Date lStatDate;
+	@Column(name = "leaveRequest_EndDate")
+	private Date lEndDate;
 	@Enumerated(EnumType.STRING)
-	@Column(name = "shift_type")
-	private ShiftType shtype;
+	private RequestStatus lStatus;
+	@Column(name = "leaveRequest_Reason")
+	private String lReason;
 	
-	@Column(name = "shift_startTime")
-	private Date shStartTime;
-	@Column(name = "shift_endTime")
-	private Date shEndTime;
-	@Column(name = "shift_date")
-	private Date shDate;
+	//fk
+	// private User lApprovedBy;
+
 	
-	//station fk
-	@ManyToOne
-	@JoinColumn(name="station_id", nullable= false)
-	private Station station;
-	
+	//fk
+//	@JoinColumn(name="userId",nullable= false)
+//	@ManyToOne
+//	private User uid;
+
 }
