@@ -1,3 +1,4 @@
 start.spring.io,
-apache-tomcat
-figma
+apache-tomcat,
+figma,
+dbeaver,

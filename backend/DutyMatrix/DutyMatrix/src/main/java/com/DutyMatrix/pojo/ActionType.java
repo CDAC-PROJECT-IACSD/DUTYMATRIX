@@ -1,0 +1,26 @@
+package com.DutyMatrix.pojo;
+
+//for history entity
+public enum ActionType {
+
+	//authentication actions
+	
+	LOGIN, LOGOUT, LOGIN_FAILED,
+	
+	//officer related actions
+	
+	PROFILE_UPDATED, SHIFT_VIEWED, LEAVE_REQUESTED, SHIFT_SWAP_REQUESTED,
+	
+	//admin actions
+	
+	SHIFT_CREATED, SHIFT_ASSIGNED, SHIFT_UPDATED, SHIFT_DELETED, STATION_CREATED, STATION_UPDATED,
+	
+	//approval actions
+	
+	LEAVE_APPROVED, LEAVE_REJECTED, SHIFT_SWAP_APPROVED, SHIFT_SWAP_REJECTED,
+	
+	//FIR actions
+	
+	FIR_CREATED, FIR_UPDATED, FIR_ASSIGNED, FIR_STATUS_UPDATED, FIR_CLOSED;
+	
+}
