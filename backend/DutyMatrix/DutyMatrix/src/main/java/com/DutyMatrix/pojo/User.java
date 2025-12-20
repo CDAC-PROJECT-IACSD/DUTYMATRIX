@@ -9,11 +9,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
-@Table(name="User")
+@Getter
+@Setter
+@Table(name="users")
 public class User {
 
 	//uid, uname, uemail, uphoneno, uemail,upassword,urank, urole;
