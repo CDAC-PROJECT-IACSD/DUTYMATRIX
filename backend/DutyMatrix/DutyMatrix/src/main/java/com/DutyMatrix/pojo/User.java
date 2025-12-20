@@ -8,12 +8,18 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
-@Table(name="User")
+@Table(name="Users")
+//
+@Getter
+@Setter
 public class User {
 
 	//uid, uname, uemail, uphoneno, uemail,upassword,urank, urole;
@@ -34,5 +40,10 @@ public class User {
 	private UserRank urank;
 	@Enumerated(EnumType.STRING)
 	private UserRole urole;
+	
+	@OneToMany
+	private Station sid;
+	
+	
 	
 }
