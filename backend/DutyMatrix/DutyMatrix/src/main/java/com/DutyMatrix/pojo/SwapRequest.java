@@ -34,23 +34,23 @@ public class SwapRequest {
 	@Column(name = "reason")
 	private String reason;
 	
-//	@Enumerated(EnumType.STRING)
-//	@Column(name = "status")
-//	private RequestStatus status;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status")
+	private RequestStatus status;
 	
-//	@ManyToOne
-//	@JoinColumn(name = "requesting_user_id")
-//	private User requestingUserId;
+	@ManyToOne
+	@JoinColumn(name = "requesting_user_id")
+	private User requestingUserId;
 	
-//	@ManyToOne
-//	@JoinColumn(name = "target_user_id")
-//	private User targetUserId;
+	@ManyToOne
+	@JoinColumn(name = "target_user_id")
+	private User targetUserId;
 	
 	@ManyToOne
 	@JoinColumn(name = "shift_id", nullable = false)
 	private Shift shift;
 	
-//	@ManyToOne
-//	@JoinColumn(name = "approved_by")
-//	private User approvedBy;
+	@ManyToOne
+	@JoinColumn(name = "approved_by")
+	private User approvedBy;
 }

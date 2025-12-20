@@ -39,13 +39,14 @@ public class LeaveRequest {
 	@Column(name = "leaveRequest_Reason")
 	private String lReason;
 	
-	//fk
-	// private User lApprovedBy;
+	@ManyToOne
+	@JoinColumn(name = "approved_by")
+	private User lapprovedBy;
 
 	
 	//fk
-//	@JoinColumn(name="userId",nullable= false)
-//	@ManyToOne
-//	private User uid;
+	@JoinColumn(name="userId",nullable= false)
+	@ManyToOne
+	private User uid;
 
 }
