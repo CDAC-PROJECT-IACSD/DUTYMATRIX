@@ -16,16 +16,10 @@ import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
-<<<<<<< HEAD
 @Table(name="Users")
 //
 @Getter
 @Setter
-=======
-@Getter
-@Setter
-@Table(name="users")
->>>>>>> 4ea90acb532b1739dd7d34055bde6cd38c32e633
 public class User {
 
 	//uid, uname, uemail, uphoneno, uemail,upassword,urank, urole;
