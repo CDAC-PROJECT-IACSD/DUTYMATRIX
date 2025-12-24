@@ -1,4 +1,4 @@
-package com.exam;
+package com.DutyMatrix;
 
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
