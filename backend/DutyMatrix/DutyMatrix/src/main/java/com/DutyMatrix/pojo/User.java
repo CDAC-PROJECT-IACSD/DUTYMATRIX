@@ -1,5 +1,7 @@
 package com.DutyMatrix.pojo;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -7,6 +9,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -41,7 +45,11 @@ public class User {
 	private UserRole urole;
 	
 	@ManyToOne
+<<<<<<< HEAD
     @JoinColumn(name = "station_id", nullable = false)
+=======
+	@JoinColumn(name="Station_id")
+>>>>>>> d2e98066516dc399808b5e905b40282335b9884c
 	private Station station;
 	
 	
