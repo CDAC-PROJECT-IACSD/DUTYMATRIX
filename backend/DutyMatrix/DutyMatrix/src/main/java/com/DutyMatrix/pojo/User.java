@@ -15,7 +15,7 @@ import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
-@Table(name="Users")
+@Table(name="users")
 //
 @Getter
 @Setter
@@ -40,8 +40,9 @@ public class User {
 	@Enumerated(EnumType.STRING)
 	private UserRole urole;
 	
-	@OneToMany
-	private Station sid;
+	@ManyToOne
+    @JoinColumn(name = "station_id", nullable = false)
+	private Station station;
 	
 	
 	
