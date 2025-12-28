@@ -33,7 +33,7 @@ public class History {
 	@Column(name="history_id")
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int hid;
+	private Long hid;
 	
 	@Enumerated(EnumType.STRING)
 	private ActionType hactionType;
@@ -45,9 +45,9 @@ public class History {
 	private String hactionDescription;
 	
 	// fk
-//	@JoinColumn(name="userId", nullable= false)
-//	@ManyToOne
-	//private User uid;
+	@JoinColumn(name="userId", nullable= false)
+	@ManyToOne
+	private User uid;
 	
 	
 	

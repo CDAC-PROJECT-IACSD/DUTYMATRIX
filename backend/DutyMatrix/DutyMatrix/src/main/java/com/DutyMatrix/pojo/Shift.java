@@ -29,7 +29,7 @@ public class Shift {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="shift_id")
-	private int shid;
+	private Long shid;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "shift_type")

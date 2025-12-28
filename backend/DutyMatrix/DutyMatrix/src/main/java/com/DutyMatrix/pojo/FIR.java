@@ -26,7 +26,7 @@ public class FIR {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int firId;
+	private Long firId;
 	private String complainantName;
 	private String complainantPhone;
 	private String crimeType;

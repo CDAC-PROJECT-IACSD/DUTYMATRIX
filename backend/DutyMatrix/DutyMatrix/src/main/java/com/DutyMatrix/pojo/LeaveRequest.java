@@ -29,7 +29,7 @@ public class LeaveRequest {
 	@Column(name = "leaveRequest_id")
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int lid;
+	private Long lid;
 	@Column(name = "leaveRequest_StartDate")
 	private Date lStatDate;
 	@Column(name = "leaveRequest_EndDate")

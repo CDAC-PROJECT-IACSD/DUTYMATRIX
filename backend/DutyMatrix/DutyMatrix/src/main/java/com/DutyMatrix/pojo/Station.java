@@ -29,7 +29,7 @@ public class Station {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "station_id")
-	private int sid;
+	private Long sid;
 	
 	@Column(name = "station_name")
 	private String sname;

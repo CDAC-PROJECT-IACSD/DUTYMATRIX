@@ -29,7 +29,7 @@ public class SwapRequest {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "swap_id")
-	private int swapId;
+	private Long swapId;
 	
 	@Column(name = "reason")
 	private String reason;
