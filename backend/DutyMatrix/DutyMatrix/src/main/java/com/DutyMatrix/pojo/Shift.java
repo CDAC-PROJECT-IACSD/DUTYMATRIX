@@ -47,4 +47,9 @@ public class Shift {
 	@JoinColumn(name="station_id", nullable= false)
 	private Station station;
 	
+	@ManyToOne
+	@JoinColumn(name = "assigned_user_id", nullable = false)
+	private User assignedUser;
+
+	
 }

@@ -40,11 +40,11 @@ public class SwapRequest {
 	
 	@ManyToOne
 	@JoinColumn(name = "requesting_user_id")
-	private User requestingUserId;
+	private User requestingUser;
 	
 	@ManyToOne
 	@JoinColumn(name = "target_user_id")
-	private User targetUserId;
+	private User targetUser;
 	
 	@ManyToOne
 	@JoinColumn(name = "shift_id", nullable = false)

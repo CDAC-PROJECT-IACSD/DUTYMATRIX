@@ -18,5 +18,5 @@ public class UserRegisterDTO {
 	private UserRank urank;
 	private UserRole urole;
 
-	private int station_id;
+	private Long station_id;
 }
