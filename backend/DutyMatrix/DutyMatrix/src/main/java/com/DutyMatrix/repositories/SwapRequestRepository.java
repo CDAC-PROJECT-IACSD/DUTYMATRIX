@@ -8,9 +8,9 @@ import com.DutyMatrix.pojo.RequestStatus;
 import com.DutyMatrix.pojo.SwapRequest;
 
 public interface SwapRequestRepository extends JpaRepository<SwapRequest, Long> {
-	 List<SwapRequest> findByRequestingUserId(Long userId);
+	List<SwapRequest> findByRequestingUser_Uid(Long userId);
 
-	    List<SwapRequest> findByTargetUserId(Long userId);
+	List<SwapRequest> findByTargetUser_Uid(Long userId);
 
-	    List<SwapRequest> findByStatus(RequestStatus status);
+	List<SwapRequest> findByStatus(RequestStatus status);
 }

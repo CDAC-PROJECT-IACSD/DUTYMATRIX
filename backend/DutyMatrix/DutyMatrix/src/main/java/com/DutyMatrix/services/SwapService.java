@@ -1,10 +1,9 @@
 package com.DutyMatrix.services;
 
-import java.awt.List;
+import java.util.List;
 
 import com.DutyMatrix.dto.SwapRequestDTO;
 import com.DutyMatrix.pojo.SwapRequest;
-import com.DutyMatrix.repositories.SwapRequestRepository;
 
 public interface SwapService {
 	SwapRequest createSwapRequest(SwapRequestDTO dto);
