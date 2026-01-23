@@ -25,5 +25,5 @@ public class FirFileDTO {
 	private String severity;
 	
 //	User ID of officer filing FIR
-	private Long filterByUserId;
+	private Long filledByUserId;
 }

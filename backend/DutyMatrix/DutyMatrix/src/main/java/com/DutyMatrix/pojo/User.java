@@ -35,6 +35,7 @@ public class User {
 	@Column(name="user_phoneNo")
 	private String uphoneNo;
 	@Column(name="user_password")
+	
 	private String upassword;
 	@Enumerated(EnumType.STRING)
 	private UserRank urank;
