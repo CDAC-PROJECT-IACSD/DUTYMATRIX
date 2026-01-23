@@ -1,10 +1,12 @@
 package com.DutyMatrix.services;
 
-import com.DutyMatrix.pojo.Shift;
+import com.DutyMatrix.dto.ShiftRequestDTO;
+import com.DutyMatrix.dto.ShiftResponseDTO;
 import com.DutyMatrix.pojo.User;
 
-public interface ShiftService
-{
-	// shift created by station-incharge for policeOfficers.
-	Shift createShift(Shift shift, User loggedInUser);
+public interface ShiftService {
+    ShiftResponseDTO createShift(ShiftRequestDTO dto, User loggedInUser);
 }
+
+
+

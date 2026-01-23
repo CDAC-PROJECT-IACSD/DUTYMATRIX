@@ -1,20 +1,19 @@
 package com.DutyMatrix.dto;
 
 import java.util.Date;
-
 import com.DutyMatrix.pojo.ShiftType;
-import com.DutyMatrix.pojo.Station;
-import com.DutyMatrix.pojo.User;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class ShiftRequestDTO {
 
-	private ShiftType shtype;
+    private ShiftType shtype;
+    private Date shStartTime;
+    private Date shEndTime;
+    private Date shDate;
 
-	private Date shStartTime;
-	private Date shEndTime;
-	private Date shDate;
-
-	private Station station;
-
-	private User assignedUser;
+    private Long stationId;      
+    private Long assignedUserId; 
 }

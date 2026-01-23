@@ -1,35 +1,40 @@
 package com.DutyMatrix.controller;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import com.DutyMatrix.pojo.Shift;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.DutyMatrix.dto.ShiftRequestDTO;
+import com.DutyMatrix.dto.ShiftResponseDTO;
+import com.DutyMatrix.pojo.Station;
 import com.DutyMatrix.pojo.User;
 import com.DutyMatrix.pojo.UserRole;
 import com.DutyMatrix.services.ShiftService;
 
+import lombok.AllArgsConstructor;
+
 @RestController
 @RequestMapping("/shifts")
+@AllArgsConstructor
 public class ShiftController {
 
     private final ShiftService shiftService;
 
-    // Constructor ONLY for dependency injection
-    public ShiftController(ShiftService shiftService) {
-        this.shiftService = shiftService;
-    }
-
-    // API method MUST be outside constructor
     @PostMapping("/create")
-    public ResponseEntity<Shift> createShift(@RequestBody Shift shift) {
+    public ResponseEntity<ShiftResponseDTO> createShift(
+            @RequestBody ShiftRequestDTO dto) {
 
-        // TEMPORARY: simulate logged-in user
+        // TEMP login simulation
         User loggedInUser = new User();
         loggedInUser.setUrole(UserRole.STATION_INCHARGE);
-        loggedInUser.setStation(shift.getStation());
+        loggedInUser.setStation(new Station());
+        loggedInUser.getStation().setSid(dto.getStationId());
 
-        Shift savedShift = shiftService.createShift(shift, loggedInUser);
-
-        return ResponseEntity.ok(savedShift);
+        return ResponseEntity.ok(
+                shiftService.createShift(dto, loggedInUser)
+        );
     }
 }
