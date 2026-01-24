@@ -1,5 +1,6 @@
 package com.DutyMatrix.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,6 +9,7 @@ import com.DutyMatrix.dto.FirResponseDTO;
 import com.DutyMatrix.pojo.FIR;
 import com.DutyMatrix.services.FirFileService;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -19,7 +21,7 @@ public class FirController {
     private final FirFileService firService;
 
     @PostMapping
-    public ResponseEntity<?> fileFIR(@RequestBody FirFileDTO firDto) {
+    public ResponseEntity<?> fileFIR(@Valid @RequestBody FirFileDTO firDto) {
 
         FIR fir = firService.fileFir(firDto);
 
@@ -30,7 +32,7 @@ public class FirController {
         dto.setInvestigatingOfficer("Not Assigned");
         dto.setStatus(fir.getStatus().name());
 
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @PutMapping("/{firId}/assign")

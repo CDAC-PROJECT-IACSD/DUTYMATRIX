@@ -1,9 +1,9 @@
 package com.DutyMatrix.custom_exception;
 
 @SuppressWarnings("serial")
-public class ResourseAlreadyExist extends RuntimeException {
+public class ResourceAlreadyExist extends RuntimeException {
 
-	public ResourseAlreadyExist (String msg){
+	public ResourceAlreadyExist (String msg){
 		super(msg);
 	}
 }

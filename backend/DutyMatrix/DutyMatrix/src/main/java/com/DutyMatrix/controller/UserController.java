@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.DutyMatrix.dto.ApiResponse;
 import com.DutyMatrix.dto.UserRegisterDTO;
 import com.DutyMatrix.services.UserService;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -23,13 +25,11 @@ public class UserController {
 	private final UserService userService;
 	
 	@PostMapping("/signup")
-	public ResponseEntity<?> registerStudent(@RequestBody UserRegisterDTO dto){
-		System.out.println("in student resister = "+dto);
+	public ResponseEntity<?> registerStudent(@Valid @RequestBody UserRegisterDTO dto){
+		System.out.println("in police resister = "+dto);
 		
-		try {
-			return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUser(dto));
-		} catch (RuntimeException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("user not registered");
-		}
+		userService.registerUser(dto);
+			return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse("User Created Successfully","Success"));
+		
 	}
 }

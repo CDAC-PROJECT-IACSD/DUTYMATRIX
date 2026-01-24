@@ -19,6 +19,7 @@ import com.DutyMatrix.dto.SwapResponseDTO;
 import com.DutyMatrix.pojo.SwapRequest;
 import com.DutyMatrix.services.SwapService;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -30,7 +31,7 @@ public class SwapController {
 	private final SwapService swapService;
 	
 	@PostMapping
-	public ResponseEntity<?> createSwap(@RequestBody SwapRequestDTO dto) {
+	public ResponseEntity<?> createSwap(@Valid @RequestBody SwapRequestDTO dto) {
 
 	    SwapRequest swap = swapService.createSwapRequest(dto);
 
