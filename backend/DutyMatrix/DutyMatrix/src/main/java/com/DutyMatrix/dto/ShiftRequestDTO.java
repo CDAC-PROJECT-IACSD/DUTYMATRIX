@@ -1,7 +1,11 @@
 package com.DutyMatrix.dto;
 
 import java.util.Date;
+
 import com.DutyMatrix.pojo.ShiftType;
+
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,11 +13,28 @@ import lombok.Setter;
 @Setter
 public class ShiftRequestDTO {
 
+	 // DAY_SHIFT / NIGHT_SHIFT must be provided
+    @NotNull(message = "Shift type is required")
     private ShiftType shtype;
+    
+    // Shift start time is mandatory
+    @NotNull(message = "Shift start time is required")
     private Date shStartTime;
+
+    // Shift end time is mandatory
+    @NotNull(message = "Shift end time is required")
     private Date shEndTime;
+
+    // Shift date cannot be in the past
+    @NotNull(message = "Shift date is required")
+    @FutureOrPresent(message = "Shift date cannot be in the past")
     private Date shDate;
 
-    private Long stationId;      
-    private Long assignedUserId; 
+    // Station where shift is created
+    @NotNull(message = "Station ID is required")
+    private Long stationId;
+
+    // Officer assigned to the shift
+    @NotNull(message = "Assigned officer ID is required")
+    private Long assignedUserId;
 }
