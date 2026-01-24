@@ -68,6 +68,9 @@ import lombok.AllArgsConstructor;
 	        response.setStationName(station.getSname());
 	        response.setAssignedUserId(assignedUser.getUid());
 	        response.setAssignedUserName(assignedUser.getUname());
+	        
+	        
+	        
 
 	        return response;
 	    }
