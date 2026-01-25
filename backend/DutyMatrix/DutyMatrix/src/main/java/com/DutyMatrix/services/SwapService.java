@@ -6,7 +6,7 @@ import com.DutyMatrix.dto.SwapRequestDTO;
 import com.DutyMatrix.pojo.SwapRequest;
 
 public interface SwapService {
-	SwapRequest createSwapRequest(SwapRequestDTO dto);
+	SwapRequest createSwapRequest(SwapRequestDTO dto, Long requesterId);
 
     SwapRequest approveSwap(Long swapId, Long approverId);
 

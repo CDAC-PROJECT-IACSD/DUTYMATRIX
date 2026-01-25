@@ -9,9 +9,6 @@ import lombok.Setter;
 @Setter
 public class SwapRequestDTO {
 
-    @NotNull(message = "Requesting user ID is required")
-    private Long requestingUserId;
-
     @NotNull(message = "Target user ID is required")
     private Long targetUserId;
 

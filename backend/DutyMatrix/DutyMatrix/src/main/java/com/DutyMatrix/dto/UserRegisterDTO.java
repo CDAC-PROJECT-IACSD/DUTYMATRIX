@@ -25,7 +25,7 @@ public class UserRegisterDTO {
 	
 	@NotBlank
 	@Size(min = 8, message = "Password should be atleast 8 character")
-	@Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,}$\r\n")
+	@Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,}$")
 	private String upassword;
 	
 	@NotBlank

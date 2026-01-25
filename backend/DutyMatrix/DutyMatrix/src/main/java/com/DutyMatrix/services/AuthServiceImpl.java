@@ -7,18 +7,24 @@ import com.DutyMatrix.dto.LoginRequestDTO;
 import com.DutyMatrix.dto.LoginResponseDTO;
 import com.DutyMatrix.pojo.User;
 import com.DutyMatrix.repositories.UserRepository;
+import com.DutyMatrix.security.JwtUtils;
+
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtils jwtUtils;
 
-    public AuthServiceImpl(UserRepository userRepository,
-                           PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    // Not required as we are using JWT Tokens
+//    public AuthServiceImpl(UserRepository userRepository,
+//                           PasswordEncoder passwordEncoder) {
+//        this.userRepository = userRepository;
+//        this.passwordEncoder = passwordEncoder;
+//    }
 
     @Override
     public LoginResponseDTO login(LoginRequestDTO request) {
@@ -27,22 +33,30 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new RuntimeException("Invalid email or password"));
         
         
-        System.out.println(passwordEncoder.encode("us@123"));
-
         if (!passwordEncoder.matches(request.getPassword(), user.getUpassword())) {
             throw new RuntimeException("Invalid email or password");
             
         }
+        
+        String token = jwtUtils.generateToken(user.getUid(), user.getUemail(), user.getUrole().name(), user.getStation().getSid());
 
-        LoginResponseDTO response = new LoginResponseDTO();
-
-        response.setUserId(user.getUid());
-        response.setUserName(user.getUname());
-        response.setEmail(user.getUemail());
-        response.setRole(user.getUrole());
-        response.setStationId(user.getStation().getSid());
-
-        return response;
+        return new LoginResponseDTO(
+        		user.getUid(),
+        		user.getUname(),
+        		user.getUemail(),
+        		user.getUrole(),
+        		user.getStation().getSid(),
+        		token
+        		);
+//        LoginResponseDTO response = new LoginResponseDTO();
+//
+//        response.setUserId(user.getUid());
+//        response.setUserName(user.getUname());
+//        response.setEmail(user.getUemail());
+//        response.setRole(user.getUrole());
+//        response.setStationId(user.getStation().getSid());
+//
+//        return response;
 
     }
 }

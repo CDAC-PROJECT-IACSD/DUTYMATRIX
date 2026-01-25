@@ -28,34 +28,38 @@ public class SwapServiceImpl implements SwapService {
     private final ShiftRepository shiftRepo;
 
     @Override
-    public SwapRequest createSwapRequest(SwapRequestDTO dto) {
+    public SwapRequest createSwapRequest(SwapRequestDTO dto, Long requesterId) {
 
-        User requester = userRepo.findById(dto.getRequestingUserId())
+        //  Get requesting user FROM JWT (secure)
+        User requester = userRepo.findById(requesterId)
                 .orElseThrow(() -> new ResourceNotFoundException("Requesting user not found"));
 
+        //  Get target user from request body
         User target = userRepo.findById(dto.getTargetUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("Target user not found"));
 
+        //  Get shift
         Shift shift = shiftRepo.findById(dto.getShiftId())
                 .orElseThrow(() -> new ResourceNotFoundException("Shift not found"));
 
-        // Shift must belong to requester
+        //  Validate: shift must belong to requester
         if (!shift.getAssignedUser().getUid().equals(requester.getUid())) {
             throw new IllegalStateException("Shift not assigned to requesting user");
         }
 
-        // Same station
+        //  Validate: both users must be from same station
         if (!requester.getStation().getSid()
                 .equals(target.getStation().getSid())) {
             throw new IllegalStateException("Users must be from same station");
         }
 
-        // Only officers
+        //  Validate: only police officers can swap
         if (requester.getUrole() != UserRole.POLICE_OFFICER ||
             target.getUrole() != UserRole.POLICE_OFFICER) {
             throw new IllegalStateException("Only officers can swap shifts");
         }
 
+        //  Create swap request
         SwapRequest swap = new SwapRequest();
         swap.setRequestingUser(requester);
         swap.setTargetUser(target);
@@ -64,8 +68,8 @@ public class SwapServiceImpl implements SwapService {
         swap.setStatus(RequestStatus.PENDING);
 
         return swapRepo.save(swap);
-    	
     }
+
 
     @Override
     public SwapRequest approveSwap(Long swapId, Long approverId) {
@@ -74,26 +78,33 @@ public class SwapServiceImpl implements SwapService {
                 .orElseThrow(() -> new ResourceNotFoundException("Approver not found"));
 
         if (approver.getUrole() == UserRole.POLICE_OFFICER) {
-            throw new IllegalStateException("Officer cannot approve swap");
+            throw new IllegalStateException("Officer cannot approve transfer");
         }
 
         SwapRequest swap = swapRepo.findById(swapId)
                 .orElseThrow(() -> new ResourceNotFoundException("Swap request not found"));
 
         if (swap.getStatus() != RequestStatus.PENDING) {
-            throw new IllegalStateException("Swap already processed");
+            throw new IllegalStateException("Request already processed");
         }
 
-        // 🔁 REAL SWAP
+        // Station validation
+        if (!approver.getStation().getSid()
+                .equals(swap.getShift().getStation().getSid())) {
+            throw new IllegalStateException("Approver must belong to same station");
+        }
+
+        // TRANSFER
         Shift shift = swap.getShift();
         shift.setAssignedUser(swap.getTargetUser());
+        shiftRepo.save(shift);
 
         swap.setApprovedBy(approver);
         swap.setStatus(RequestStatus.APPROVED);
 
         return swap;
-    	
     }
+
 
     @Override
     public SwapRequest rejectSwap(Long swapId, Long approverId) {

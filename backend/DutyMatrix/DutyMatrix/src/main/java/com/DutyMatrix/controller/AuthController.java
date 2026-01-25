@@ -1,6 +1,7 @@
 package com.DutyMatrix.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,15 +11,15 @@ import com.DutyMatrix.dto.LoginRequestDTO;
 import com.DutyMatrix.dto.LoginResponseDTO;
 import com.DutyMatrix.services.AuthService;
 
+import lombok.AllArgsConstructor;
+
 @RestController
 @RequestMapping("/auth")
+@AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
 
     private final AuthService authService;
-
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(
