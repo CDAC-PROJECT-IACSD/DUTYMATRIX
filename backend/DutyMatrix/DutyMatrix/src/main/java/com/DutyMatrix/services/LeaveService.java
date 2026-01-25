@@ -6,9 +6,9 @@ import com.DutyMatrix.pojo.User;
 
 public interface LeaveService {
 
-    String applyLeave(LeaveRequestDTO dto, User loggedInUser);
+    String applyLeave(LeaveRequestDTO dto, Long userId);
 
-    String approveLeave(Long leaveId, User loggedInUser);
+    String approveLeave(Long leaveId, Long userId);
 
-    String rejectLeave(Long leaveId, User loggedInUser);
+    String rejectLeave(Long leaveId, Long userId);
 }
