@@ -2,7 +2,7 @@ import React from "react";
 import "../styles/Login.css";
 import { useAuth } from "../auth/AuthContext";
 import { loginUser } from "../services/api";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, Shield } from "lucide-react"; // Added Shield icon for police theme
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
@@ -20,7 +20,7 @@ export default function Login() {
     try {
       const loginData = await loginUser({ email, password });
       login(loginData);
-      alert("Login Successful!");
+      // Removed alert for smoother experience, or can replace with a toast
       if(loginData.role === "POLICE_OFFICER"){
         navigate("/dashboard/officer");
       }
@@ -36,44 +36,72 @@ export default function Login() {
   };
 
   return (
-
     <div className="login-page">
-      <div className="login-card">
-        <div className="login-image">
-          <img src="/src/assets/login_img1.png" alt="Login" />
-        </div>
-        <div className="login-form">
-          <h2>Welcome Officer</h2>
-          <h4>Please Login To Continue</h4>
-          <form onSubmit={handleSubmit}> 
-            <div className="input-group">
-              <Mail className="input-icon" />
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            
-            <div className="input-group">
-              <Lock className="input-icon" />
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
+      <div className="container h-100 d-flex justify-content-center align-items-center">
+        <div className="login-card row g-0">
+          
+          {/* Left Side - Image/Branding */}
+          <div className="col-md-6 login-image-section d-none d-md-flex flex-column justify-content-center align-items-center">
+             <div className="overlay"></div>
+             <div className="brand-content text-center">
+                <Shield size={80} className="mb-3 text-warning" />
+                <h2 className="brand-title">DUTY MATRIX</h2>
+                <p className="brand-subtitle">Secure Force Management System</p>
+                <div className="brand-divider"></div>
+                <p className="brand-motto">Service • Honour • Safety</p>
+             </div>
+          </div>
 
-            <button className="login-btn">Login</button>
+          {/* Right Side - Login Form */}
+          <div className="col-md-6 login-form-section">
+            <div className="form-wrapper">
+              <div className="text-center mb-5">
+                <h2 className="fw-bold mb-2 text-white">Officer Portal</h2>
+                <p className="text-white-50">Enter credentials to access the secure network</p>
+              </div>
 
-            <p className="signup">
-              Don't have an account? <span>Sign up</span>
-            </p>
-          </form>
+              <form onSubmit={handleSubmit}> 
+                <div className="mb-4">
+                  <label className="form-label text-uppercase small fw-bold text-white">Official Email</label>
+                  <div className="input-group-custom">
+                    <Mail className="input-icon" />
+                    <input
+                      type="email"
+                      className="form-control-custom"
+                      placeholder="officer@police.gov.in"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <div className="mb-5">
+                  <label className="form-label text-uppercase small fw-bold text-white">Secure Password</label>
+                  <div className="input-group-custom">
+                    <Lock className="input-icon" />
+                    <input
+                      type="password"
+                      className="form-control-custom"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <button className="login-btn w-100">
+                  SECURE LOGIN
+                </button>
+
+                <p className="signup text-center mt-4">
+                  New Personnel? <span className="text-warning cursor-pointer">Register Request</span>
+                </p>
+              </form>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

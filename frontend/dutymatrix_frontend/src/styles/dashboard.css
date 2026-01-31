@@ -1,43 +1,280 @@
-.welcome-message {
-  color: aliceblue;
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 20px;
-  text-align: center;
+/* =========================================
+   PREMIUM DASHBOARD THEME
+   ========================================= */
+
+:root {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  --warning-gradient: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+  --danger-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  --text-dark: #2d3748;
+  --text-light: #f7fafc;
+  --bg-dark: #1a202c;
 }
 
+body {
+  background-color: #f0f2f5; /* Fallback */
+  background: linear-gradient(to right, #141e30, #243b55); /* Dark premium background */
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: var(--text-dark);
+}
+
+/* =========================================
+   DASHBOARD CONTAINER & TYPOGRAPHY
+   ========================================= */
+
 .dashboard-container {
-  padding: 20px;
+  padding: 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
 }
 
 .dashboard-title {
-  color: aliceblue;
-  font-size: 2rem;
+  color: var(--text-light);
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-align: center;
   margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard-container h4 {
+  color: var(--text-light);
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.welcome-message {
+  color: #a0aec0;
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 40px;
   text-align: center;
 }
 
+/* =========================================
+   CONTENT AREA ANIMATION
+   ========================================= */
+
+.content-area {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* =========================================
+   BUTTONS
+   ========================================= */
+
 .button-container {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
-  margin-top: 20px;
+  margin: 40px auto;
+  max-width: 1200px;
 }
 
 .dashboard-btn {
   display: flex;
   align-items: center;
-  padding: 10px 20px;
-  font-size: 1rem;
-  font-weight: bold;
+  justify-content: center;
+  padding: 20px 30px;
+  font-size: 1.1rem;
+  font-weight: 700;
   border: none;
-  border-radius: 5px;
+  border-radius: 15px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  color: white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.dashboard-btn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard-btn.btn-primary {
+  background: var(--primary-gradient);
+}
+
+.dashboard-btn.btn-success {
+  background: var(--success-gradient);
+  color: #1a202c; /* Dark text for better contrast on light green */
+}
+
+.dashboard-btn.btn-warning {
+  background: var(--warning-gradient);
+  color: #1a202c;
+}
+
+.dashboard-btn.btn-danger {
+  background: var(--danger-gradient);
+  color: #1a202c;
 }
 
 .btn-icon {
-  width: 20px;
-  height: 20px;
-  margin-right: 8px;
+  width: 28px;
+  height: 28px;
+  margin-right: 15px;
+  object-fit: contain;
+}
+
+/* =========================================
+   CARDS & CONTAINERS
+   ========================================= */
+
+.card {
+  background: var(--card-bg);
+  border: none;
+  border-radius: 20px;
+  box-shadow: var(--card-shadow);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  margin-bottom: 30px;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.card-header {
+  background: transparent;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 20px 25px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+/* =========================================
+   TABLES
+   ========================================= */
+
+.table {
+  margin-bottom: 0;
+  background-color: transparent;
+}
+
+.table thead th {
+  background-color: #2d3748;
+  color: #fff;
+  border: none;
+  padding: 15px 20px;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.table tbody td {
+  padding: 15px 20px;
+  vertical-align: middle;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.table-bordered {
+  border: none;
+}
+
+.table-bordered td, .table-bordered th {
+  border: none;
+}
+
+/* =========================================
+   FORMS & INPUTS
+   ========================================= */
+
+.form-label {
+  color: var(--text-light); /* Labels on dark background */
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* Override labels inside cards to be dark */
+.card .form-label {
+  color: var(--text-dark);
+}
+
+.form-select, .form-control {
+  border-radius: 12px;
+  padding: 12px 15px;
+  border: 2px solid #e2e8f0;
+  background-color: #f7fafc;
+  transition: all 0.3s ease;
+}
+
+.form-select:focus, .form-control:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+  background-color: #fff;
+}
+
+/* =========================================
+   BADGES & UTILITIES
+   ========================================= */
+
+.badge {
+  padding: 8px 12px;
+  border-radius: 30px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.bg-dark {
+  background-color: #2d3748 !important;
+}
+
+.bg-warning {
+  background-color: #ecc94b !important;
+  color: #2d3748 !important;
+}
+
+.bg-success {
+  background-color: #48bb78 !important;
+}
+
+.bg-danger {
+  background-color: #f56565 !important;
+}
+
+hr {
+  border-top: 2px solid rgba(255, 255, 255, 0.1);
+  opacity: 0.5;
+}
+
+@media (max-width: 992px) {
+  .button-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .button-container {
+    grid-template-columns: 1fr;
+  }
 }

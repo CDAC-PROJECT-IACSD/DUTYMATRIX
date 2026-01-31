@@ -77,9 +77,10 @@ public class SwapServiceImpl implements SwapService {
         User approver = userRepo.findById(approverId)
                 .orElseThrow(() -> new ResourceNotFoundException("Approver not found"));
 
-        if (approver.getUrole() == UserRole.POLICE_OFFICER) {
-            throw new IllegalStateException("Officer cannot approve transfer");
+        if (approver.getUrole() != UserRole.STATION_INCHARGE) {
+            throw new IllegalStateException("Only Station Incharge can approve swap");
         }
+
 
         SwapRequest swap = swapRepo.findById(swapId)
                 .orElseThrow(() -> new ResourceNotFoundException("Swap request not found"));
@@ -112,9 +113,10 @@ public class SwapServiceImpl implements SwapService {
         User approver = userRepo.findById(approverId)
                 .orElseThrow(() -> new ResourceNotFoundException("Approver not found"));
 
-        if (approver.getUrole() == UserRole.POLICE_OFFICER) {
-            throw new IllegalStateException("Officer cannot reject swap");
+        if (approver.getUrole() != UserRole.STATION_INCHARGE) {
+            throw new IllegalStateException("Only Station Incharge can reject swap");
         }
+
 
         SwapRequest swap = swapRepo.findById(swapId)
                 .orElseThrow(() -> new ResourceNotFoundException("Swap request not found"));
@@ -127,11 +129,32 @@ public class SwapServiceImpl implements SwapService {
     }
 
     @Override
-    public List<SwapRequest> getPendingRequestsByStation(Long stationId) {
+    public List<SwapRequest> getPendingRequestsByStation(Long approverId) {
+
+        User approver = userRepo.findById(approverId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (approver.getUrole() != UserRole.STATION_INCHARGE) {
+            throw new RuntimeException("Access denied");
+        }
+
+        Long stationId = approver.getStation().getSid();
+
         return swapRepo.findByStatus(RequestStatus.PENDING)
+                .stream()
+                .filter(sr ->
+                    sr.getShift().getStation().getSid().equals(stationId)
+                )
+                .toList();
+    }
+
+    
+    @Override
+    public List<SwapRequest> getAllSwapsForStation(Long stationId) {
+        return swapRepo.findAll()
                 .stream()
                 .filter(sr -> sr.getShift().getStation().getSid().equals(stationId))
                 .toList();
-    	
     }
+
 }

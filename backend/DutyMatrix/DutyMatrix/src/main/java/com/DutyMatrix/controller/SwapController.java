@@ -94,25 +94,43 @@ public class SwapController {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasRole('STATION_INCHARGE')")
     @GetMapping("/pending")
+    @PreAuthorize("hasRole('STATION_INCHARGE')")
     public ResponseEntity<?> getPendingSwaps(
             @AuthenticationPrincipal JwtUserDTO user) {
 
+        return ResponseEntity.ok(
+            swapService.getPendingRequestsByStation(user.getUserId())
+        );
+    }
+
+    
+    //For commissioner dashboard
+    @PreAuthorize("hasRole('COMMISSIONER')")
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllSwapsForCommissioner(
+            @AuthenticationPrincipal JwtUserDTO user) {
+
         List<SwapResponseDTO> response =
-                swapService.getPendingRequestsByStation(user.getStationId())
-                        .stream()
-                        .map(swap -> {
-                            SwapResponseDTO dto = new SwapResponseDTO();
-                            dto.setSwapId(swap.getSwapId());
-                            dto.setStatus(swap.getStatus().name());
-                            dto.setRequestingUser(swap.getRequestingUser().getUname());
-                            dto.setTargetUser(swap.getTargetUser().getUname());
-                            dto.setShiftType(swap.getShift().getShtype().name());
-                            return dto;
-                        })
-                        .toList();
+            swapService.getAllSwapsForStation(user.getStationId())
+                .stream()
+                .map(swap -> {
+                    SwapResponseDTO dto = new SwapResponseDTO();
+                    dto.setSwapId(swap.getSwapId());
+                    dto.setStatus(swap.getStatus().name());
+                    dto.setRequestingUser(swap.getRequestingUser().getUname());
+                    dto.setTargetUser(swap.getTargetUser().getUname());
+                    dto.setShiftType(swap.getShift().getShtype().name());
+                    dto.setApprovedBy(
+                        swap.getApprovedBy() != null
+                            ? swap.getApprovedBy().getUname()
+                            : null
+                    );
+                    return dto;
+                })
+                .toList();
 
         return ResponseEntity.ok(response);
     }
+
 }
