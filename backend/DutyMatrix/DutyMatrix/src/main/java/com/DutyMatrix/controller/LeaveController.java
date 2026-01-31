@@ -1,5 +1,7 @@
 package com.DutyMatrix.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.DutyMatrix.dto.JwtUserDTO;
 import com.DutyMatrix.dto.LeaveRequestDTO;
+import com.DutyMatrix.dto.LeaveResponseDTO;
 import com.DutyMatrix.services.LeaveService;
 
 import lombok.AllArgsConstructor;
@@ -62,14 +65,15 @@ public class LeaveController {
         );
     }
     
-    @PreAuthorize("hasRole('COMMISSIONER')")
     @GetMapping("/pending")
-    public ResponseEntity<?> getPendingLeavesForCommissioner(
+    @PreAuthorize("hasRole('COMMISSIONER')")
+    public ResponseEntity<List<LeaveResponseDTO>> getPendingLeaves(
             @AuthenticationPrincipal JwtUserDTO user) {
 
         return ResponseEntity.ok(
-                leaveService.getPendingLeavesForCommissioner(user.getUserId())
+            leaveService.getPendingLeavesForCommissioner(user.getUserId())
         );
     }
+
 
 }

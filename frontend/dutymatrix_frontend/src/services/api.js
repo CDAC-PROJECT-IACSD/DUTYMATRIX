@@ -55,10 +55,11 @@ export const getDutiesByDate = async (date) => {
   return res.data;
 };
 
-export const getSwapRequestsByStation = async () => {
-  const res = await API.get("/swaps/pending"); // station-scoped via JWT
+export const getAllSwapsForCommissioner = async () => {
+  const res = await API.get("/swaps/all");
   return res.data;
 };
+
 
 export const getLeaveRequestsByStation = async () => {
   const res = await API.get("/leave/pending");

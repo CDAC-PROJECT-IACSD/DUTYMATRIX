@@ -115,4 +115,33 @@ public class SwapController {
 
         return ResponseEntity.ok(response);
     }
+    
+    //For commissioner dashboard
+    @PreAuthorize("hasRole('COMMISSIONER')")
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllSwapsForCommissioner(
+            @AuthenticationPrincipal JwtUserDTO user) {
+
+        List<SwapResponseDTO> response =
+            swapService.getAllSwapsForStation(user.getStationId())
+                .stream()
+                .map(swap -> {
+                    SwapResponseDTO dto = new SwapResponseDTO();
+                    dto.setSwapId(swap.getSwapId());
+                    dto.setStatus(swap.getStatus().name());
+                    dto.setRequestingUser(swap.getRequestingUser().getUname());
+                    dto.setTargetUser(swap.getTargetUser().getUname());
+                    dto.setShiftType(swap.getShift().getShtype().name());
+                    dto.setApprovedBy(
+                        swap.getApprovedBy() != null
+                            ? swap.getApprovedBy().getUname()
+                            : null
+                    );
+                    return dto;
+                })
+                .toList();
+
+        return ResponseEntity.ok(response);
+    }
+
 }

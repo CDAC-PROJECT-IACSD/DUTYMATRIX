@@ -13,4 +13,7 @@ public interface SwapService {
     SwapRequest rejectSwap(Long swapId, Long approverId);
 
     List<SwapRequest> getPendingRequestsByStation(Long stationId);
+    
+    List<SwapRequest> getAllSwapsForStation(Long stationId);
+
 }

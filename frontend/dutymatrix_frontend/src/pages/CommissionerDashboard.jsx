@@ -4,7 +4,7 @@ import {
   getAllStations,
   getDutiesByDate,
   getLeaveRequestsByStation,
-  getSwapRequestsByStation,
+  getAllSwapsForCommissioner,
   rejectLeave,
 } from "../services/api";
 import Navbar from "../components/Navbar";
@@ -40,7 +40,7 @@ export default function CommissionerDashboard() {
 
   useEffect(() => {
     if (showSwapRequests) {
-      getSwapRequestsByStation().then(setSwapRequests).catch(console.error);
+      getAllSwapsForCommissioner().then(setSwapRequests).catch(console.error);
     }
   }, [showSwapRequests]);
 
@@ -58,7 +58,7 @@ export default function CommissionerDashboard() {
 
   const loadSwap = () => {
     // Implement swap request loading logic here
-    getSwapRequestsByStation().then(setSwapRequests).catch(console.error);
+    getAllSwapsForCommissioner().then(setSwapRequests).catch(console.error);
   };
 
   return (

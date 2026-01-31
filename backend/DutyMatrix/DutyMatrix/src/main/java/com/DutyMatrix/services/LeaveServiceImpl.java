@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.DutyMatrix.custom_exception.ResourceNotFoundException;
 import com.DutyMatrix.dto.LeaveRequestDTO;
+import com.DutyMatrix.dto.LeaveResponseDTO;
 import com.DutyMatrix.pojo.LeaveRequest;
 import com.DutyMatrix.pojo.RequestStatus;
 import com.DutyMatrix.pojo.User;
@@ -161,21 +162,30 @@ public class LeaveServiceImpl implements LeaveService {
         );
     }
     
-    @Override
-    public List<LeaveRequest> getPendingLeavesForCommissioner(Long commissionerId) {
+    public List<LeaveResponseDTO> getPendingLeavesForCommissioner(Long commissionerId) {
 
         User commissioner = userRepository.findByUid(commissionerId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if (commissioner.getUrole() != UserRole.COMMISSIONER) {
-            throw new RuntimeException("Access denied");
+            throw new RuntimeException("Unauthorized");
         }
 
-        return leaveRepository.findPendingLeavesByStation(
-                RequestStatus.PENDING,
-                commissioner.getStation().getSid()
-        );
+        return leaveRepository.findAllPendingLeaves()
+            .stream()
+            .map(l -> new LeaveResponseDTO(
+                l.getLid(),
+                l.getUid().getUname(),
+                l.getUid().getUrole().name(),
+                l.getLStatDate(),
+                l.getLEndDate(),
+                l.getLReason(),
+                l.getLStatus().name()
+            ))
+            .toList();
     }
+
+
 
     
 }
