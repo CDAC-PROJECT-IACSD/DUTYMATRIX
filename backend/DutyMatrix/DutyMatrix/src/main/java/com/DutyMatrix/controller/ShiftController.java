@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.DutyMatrix.dto.JwtUserDTO;
 import com.DutyMatrix.dto.ShiftRequestDTO;
-import com.DutyMatrix.dto.ShiftResponseDTO;
 import com.DutyMatrix.services.ShiftService;
 
 import lombok.AllArgsConstructor;
@@ -25,16 +24,17 @@ public class ShiftController {
     private final ShiftService shiftService;
 
     // Only STATION_INCHARGE can create shifts
-    @PreAuthorize("hasRole('STATION_INCHARGE')")
     @PostMapping
-    public ResponseEntity<ShiftResponseDTO> createShift(
+    @PreAuthorize("hasRole('STATION_INCHARGE')")
+    public ResponseEntity<String> createShift(
             @RequestBody ShiftRequestDTO dto,
             @AuthenticationPrincipal JwtUserDTO user) {
 
-        // user info comes from JWT
-        String response =
-                shiftService.createShift(dto, user.getUserId());
-
-        return null;
+        String response = shiftService.createShift(dto, user.getUserId());
+        return ResponseEntity.ok(response);
     }
+
+    
 }
+
+

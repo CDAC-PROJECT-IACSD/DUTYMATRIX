@@ -4,7 +4,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #0f0f0f;
+  background: #676161;
 }
 
 
@@ -12,7 +12,7 @@
   display: flex;
   width: 900px;
   height: 500px;
-  background: #1a1a1a;
+  background: #817a7a;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.763);
@@ -20,7 +20,7 @@
 
 .login-image {
   flex: 1;
-  background: #111;
+  background: #393535;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -46,7 +46,7 @@
 .input-group {
   display: flex;
   align-items: center;
-  background: #111;
+  background: #c2b9b9;
   border-radius: 8px;
   padding: 12px;
   margin: 15px 0 20px 0;
@@ -80,13 +80,13 @@
 }
 
 .login-btn:hover {
-  background: #111;
+  background: #b0abab;
 }
 
 .signup-text {
   margin-top: 20px;
   text-align: center;
-  color: #888;
+  color: #dbd3d3;
 }
 
 .signup-text span {

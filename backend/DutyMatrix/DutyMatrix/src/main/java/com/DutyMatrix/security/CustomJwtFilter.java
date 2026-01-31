@@ -20,24 +20,34 @@ import lombok.AllArgsConstructor;
 
 @Component
 @AllArgsConstructor
-public class CustomJwtFilter extends OncePerRequestFilter{
+public class CustomJwtFilter extends OncePerRequestFilter {
 
-	private final JwtUtils jwtUtils;
-	
-	@Override
+    private final JwtUtils jwtUtils;
+
+    @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain)
             throws ServletException, IOException {
 
+        String path = request.getRequestURI();
+
+        // ✅ Allow public endpoints without JWT
+        if (path.startsWith("/auth")
+                || path.startsWith("/users/signup")
+                || path.startsWith("/swagger-ui")
+                || path.startsWith("/v3/api-docs")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String header = request.getHeader("Authorization");
 
         if (header != null && header.startsWith("Bearer ")) {
-
-            String token = header.substring(7);
-
             try {
+                String token = header.substring(7);
+
                 Claims claims = jwtUtils.validateToken(token);
 
                 Long userId = claims.get("userId", Long.class);
@@ -48,14 +58,14 @@ public class CustomJwtFilter extends OncePerRequestFilter{
                 JwtUserDTO user =
                         new JwtUserDTO(userId, email, role, stationId);
 
-                UsernamePasswordAuthenticationToken auth =
+                UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                                 user,
                                 null,
                                 List.of(new SimpleGrantedAuthority("ROLE_" + role))
                         );
 
-                SecurityContextHolder.getContext().setAuthentication(auth);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
 
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -66,4 +76,3 @@ public class CustomJwtFilter extends OncePerRequestFilter{
         filterChain.doFilter(request, response);
     }
 }
-

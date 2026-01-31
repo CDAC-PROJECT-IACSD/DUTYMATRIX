@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.DutyMatrix.dto.JwtUserDTO;
 import com.DutyMatrix.dto.LeaveRequestDTO;
-import com.DutyMatrix.pojo.User;
 import com.DutyMatrix.repositories.UserRepository;
 import com.DutyMatrix.services.LeaveService;
 
@@ -30,7 +29,7 @@ public class LeaveController {
     private final UserRepository userRepository;
 
     // 1️ Police applies leave
-    @PreAuthorize("hasRole('POLICE_OFFICER')")
+    @PreAuthorize("hasAuthority('ROLE_POLICE_OFFICER')")
     @PostMapping("/apply")
     public ResponseEntity<String> applyLeave(
             @RequestBody LeaveRequestDTO dto,
