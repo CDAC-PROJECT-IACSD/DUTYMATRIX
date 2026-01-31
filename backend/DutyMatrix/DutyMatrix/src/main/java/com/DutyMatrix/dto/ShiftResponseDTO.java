@@ -1,7 +1,10 @@
 package com.DutyMatrix.dto;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 import com.DutyMatrix.pojo.ShiftType;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,9 +14,9 @@ public class ShiftResponseDTO {
 
 	private Long shid;
 	private ShiftType shtype;
-	private Date shStartTime;
-	private Date shEndTime;
-	private Date shDate;
+	private LocalTime shStartTime;
+	private LocalTime shEndTime;
+	private LocalDate shDate;
 
 	private Long stationId;
 	private String stationName;

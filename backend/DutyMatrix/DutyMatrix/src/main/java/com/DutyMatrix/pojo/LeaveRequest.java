@@ -18,7 +18,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "LeaveRequest")
+@Table(name = "leaveRequest")
 @NoArgsConstructor
 
 @Setter

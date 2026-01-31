@@ -1,6 +1,7 @@
 package com.DutyMatrix.pojo;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,41 +16,37 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @Entity
-@Table(name= "shifts")
+@Table(name = "shifts")
 @NoArgsConstructor
-
-@Setter
 @Getter
-@ToString
+@Setter
 public class Shift {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="shift_id")
-	private Long shid;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "shift_type")
-	private ShiftType shtype;
-	
-	@Column(name = "shift_startTime")
-	private Date shStartTime;
-	@Column(name = "shift_endTime")
-	private Date shEndTime;
-	@Column(name = "shift_date")
-	private Date shDate;
-	
-	//station fk
-	@ManyToOne
-	@JoinColumn(name="station_id", nullable= false)
-	private Station station;
-	
-	@ManyToOne
-	@JoinColumn(name = "assigned_user_id", nullable = false)
-	private User assignedUser;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "shift_id")
+    private Long shid;
 
-	
+    @Enumerated(EnumType.STRING)
+    @Column(name = "shift_type")
+    private ShiftType shtype;
+
+    @Column(name = "shift_date")
+    private LocalDate shDate;
+
+    @Column(name = "shift_start_time")
+    private LocalTime shStartTime;
+
+    @Column(name = "shift_end_time")
+    private LocalTime shEndTime;
+
+    @ManyToOne
+    @JoinColumn(name = "station_id", nullable = false)
+    private Station station;
+
+    @ManyToOne
+    @JoinColumn(name = "assigned_user_id")
+    private User assignedUser;
 }

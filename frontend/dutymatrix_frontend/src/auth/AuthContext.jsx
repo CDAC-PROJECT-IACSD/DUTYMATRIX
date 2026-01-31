@@ -1,37 +1,70 @@
 import { createContext, useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
-export const AuthProvider = ({ children })=>{
-    const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")) || null);
+export const AuthProvider = ({ children }) => {
+  const navigate = useNavigate();
 
-    const [token, setToken] = useState(localStorage.getItem("token") || null);
+  // Load persisted auth state
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem("user")) || null
+  );
+  const [token, setToken] = useState(
+    localStorage.getItem("token") || null
+  );
 
-    const isAuthenticated = !!token;
+  // Authentication flag
+  const isAuthenticated = Boolean(token);
 
-    const login = (loginResponse)=>{
-        const {token,...userData} = loginResponse;
+  // Extract role safely
+  const role = user?.role || null;
 
-        localStorage.setItem("token",token);
-        localStorage.setItem("user",JSON.stringify(userData));
+  // Role-based helpers (MATCH BACKEND ENUMS)
+  const isOfficer = role === "POLICE_OFFICER";
+  const isStationIncharge = role === "STATION_INCHARGE";
+  const isCommissioner = role === "COMMISSIONER";
 
-        setToken(token);
-        setUser(userData);
-    }
+  // Login handler
+  const login = (loginResponse) => {
+    const { token, ...userData } = loginResponse;
 
-    const logout = ()=>{
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        setToken(null);
-        setUser(null);
-    }
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(userData));
 
-    return (
-        <AuthContext.Provider value={{user, token, isAuthenticated, login, logout}}>
-            {children}
-        </AuthContext.Provider>
-    )
-}
+    setToken(token);
+    setUser(userData);
+  };
 
+  // Logout handler
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
 
-export const useAuth = ()=> useContext(AuthContext);
+    setToken(null);
+    setUser(null);
+
+    navigate("/");
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        role,
+        isAuthenticated,
+        isOfficer,
+        isStationIncharge,
+        isCommissioner,
+        login,
+        logout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+// Custom hook
+export const useAuth = () => useContext(AuthContext);
