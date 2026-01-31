@@ -1,6 +1,6 @@
 package com.DutyMatrix.pojo;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,35 +18,36 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "leaveRequest")
+@Table(name = "leave_request")
 @NoArgsConstructor
-
-@Setter
 @Getter
+@Setter
 @ToString
 public class LeaveRequest {
 
-	@Column(name = "leaveRequest_id")
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long lid;
-	@Column(name = "leaveRequest_StartDate")
-	private Date lStatDate;
-	@Column(name = "leaveRequest_EndDate")
-	private Date lEndDate;
-	@Enumerated(EnumType.STRING)
-	private RequestStatus lStatus;
-	@Column(name = "leaveRequest_Reason")
-	private String lReason;
-	
-	@ManyToOne
-	@JoinColumn(name = "approved_by")
-	private User lapprovedBy;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "leave_request_id")
+    private Long lid;
 
-	
-	//fk
-	@JoinColumn(name="userId",nullable= false)
-	@ManyToOne
-	private User uid;
+    @Column(name = "leave_request_start_date", nullable = false)
+    private LocalDate lStatDate;
 
+    @Column(name = "leave_request_end_date", nullable = false)
+    private LocalDate lEndDate;
+
+    @Column(name = "leave_request_reason", nullable = false)
+    private String lReason;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "l_status", nullable = false)
+    private RequestStatus lStatus;
+
+    @ManyToOne
+    @JoinColumn(name = "approved_by")
+    private User lapprovedBy;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User uid;
 }

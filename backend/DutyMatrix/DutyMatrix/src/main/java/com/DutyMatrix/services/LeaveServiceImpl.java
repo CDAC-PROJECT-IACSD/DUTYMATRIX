@@ -1,6 +1,6 @@
 package com.DutyMatrix.services;
 
-import javax.management.RuntimeErrorException;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -25,149 +25,157 @@ public class LeaveServiceImpl implements LeaveService {
     private final UserRepository userRepository;
 
     /**
-     * Allows a police officer to apply for leave.
-     * Only users with POLICE_OFFICER role are permitted.
+     * APPLY LEAVE
+     * - Police Officer → PENDING (approved by Station Incharge)
+     * - Station Incharge → PENDING (approved by Commissioner)
+     * - Commissioner → AUTO APPROVED
      */
     @Override
     public String applyLeave(LeaveRequestDTO dto, Long userId) {
 
-        // Fetch logged-in user from database
-        User loggedInUser = userRepository.findByUid(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByUid(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // Role validation
-//        if (loggedInUser.getUrole() != UserRole.POLICE_OFFICER) {
-//            throw new RuntimeException("Only police can apply leave");
-//        }
-        
-
-        // Create leave request
         LeaveRequest leave = new LeaveRequest();
-        leave.setLStatDate(dto.getLStartDate());
-        leave.setLEndDate(dto.getLEndDate());
-        leave.setLReason(dto.getLReason());
-        leave.setLStatus(RequestStatus.PENDING);
-        leave.setUid(loggedInUser);
+        leave.setLStatDate(dto.getStartDate());
+        leave.setLEndDate(dto.getEndDate());
+        leave.setLReason(dto.getReason());
+        leave.setUid(user);
 
-        if(loggedInUser.getUrole() == UserRole.COMMISSIONER) {
-        	leave.setLStatus(RequestStatus.APPROVED);
-        	leave.setLapprovedBy(loggedInUser);
-        	leaveRepository.save(leave);
-        	return "Commissioner leave auto-approved";
+        // Commissioner → auto approval
+        if (user.getUrole() == UserRole.COMMISSIONER) {
+            leave.setLStatus(RequestStatus.APPROVED);
+            leave.setLapprovedBy(user);
+            leaveRepository.save(leave);
+            return "Commissioner leave auto-approved";
         }
-        
-        if(loggedInUser.getUrole() == UserRole.POLICE_OFFICER || loggedInUser.getUrole() == UserRole.STATION_INCHARGE) {
-        	leave.setLStatus(RequestStatus.PENDING);
-        	leaveRepository.save(leave);
-        	
-        	return "leave request submitted";
+
+        // Police Officer or Station Incharge → pending
+        if (user.getUrole() == UserRole.POLICE_OFFICER ||
+            user.getUrole() == UserRole.STATION_INCHARGE) {
+
+            leave.setLStatus(RequestStatus.PENDING);
+            leaveRepository.save(leave);
+            return "Leave request submitted and pending approval";
         }
-        
-        
-//        // Persist leave request
-//        leaveRepository.save(leave);
-//
-//        return "Leave request submitted (PENDING)";
+
         throw new RuntimeException("Invalid role for leave request");
     }
 
     /**
-     * Allows a station incharge to approve a leave request
-     * belonging to their own station.
+     * APPROVE LEAVE
+     * - Station Incharge → approves Police Officer
+     * - Commissioner → approves Station Incharge
      */
     @Override
-    public String approveLeave(Long leaveId, Long userId) {
+    public String approveLeave(Long leaveId, Long approverId) {
 
-        // Fetch logged-in incharge
-        User incharge = userRepository.findByUid(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User approver = userRepository.findByUid(approverId)
+                .orElseThrow(() -> new ResourceNotFoundException("Approver not found"));
 
-        // Role validation not required
-//        if (incharge.getUrole() != UserRole.STATION_INCHARGE) {
-//            throw new RuntimeException("Only station incharge can approve leave");
-//        }
-
-        // Fetch leave request
         LeaveRequest leave = leaveRepository.findById(leaveId)
-                .orElseThrow(() -> new RuntimeException("Leave not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Leave request not found"));
 
         User requester = leave.getUid();
-        
-        // Station ownership validation
-//        if (!leave.getUid().getStation().getSid()
-//                .equals(incharge.getStation().getSid())) {
-//            throw new RuntimeException("Cannot approve leave of another station");
-//        }
-        
-        if(requester.getUrole() == UserRole.POLICE_OFFICER) {
-        	if(incharge.getUrole() != UserRole.STATION_INCHARGE) {
-        		throw new ResourceNotFoundException("Only Station-Incharge can approve this leave request");
-        	}
-        	
-        	if(!incharge.getStation().getSid().equals(requester.getStation().getSid())) {
-        		throw new RuntimeException("Different station's station-incharge cannot approve this leave request");
-        	}
+
+        // Police Officer leave → Station Incharge approval
+        if (requester.getUrole() == UserRole.POLICE_OFFICER) {
+
+            if (approver.getUrole() != UserRole.STATION_INCHARGE) {
+                throw new RuntimeException("Only Station Incharge can approve police leave");
+            }
+
+            if (!approver.getStation().getSid()
+                    .equals(requester.getStation().getSid())) {
+                throw new RuntimeException("Station mismatch");
+            }
         }
-        
-        else if(requester.getUrole() == UserRole.STATION_INCHARGE) {
-        	if(incharge.getUrole() != UserRole.COMMISSIONER) {
-        		throw new RuntimeException("Only commissioner can approve your request");
-        	}
+
+        // Station Incharge leave → Commissioner approval
+        else if (requester.getUrole() == UserRole.STATION_INCHARGE) {
+
+            if (approver.getUrole() != UserRole.COMMISSIONER) {
+                throw new RuntimeException("Only Commissioner can approve Station Incharge leave");
+            }
         }
-        
+
         else {
-        	throw new RuntimeException("Invalid leave approve");
+            throw new RuntimeException("Invalid leave approval flow");
         }
 
-        // Update leave status
         leave.setLStatus(RequestStatus.APPROVED);
-        leave.setLapprovedBy(incharge);
-
-        // Persist changes
+        leave.setLapprovedBy(approver);
         leaveRepository.save(leave);
 
-        return "Leave approved";
+        return "Leave approved successfully";
     }
 
     /**
-     * Allows a station incharge to reject a leave request
-     * belonging to their own station.
+     * REJECT LEAVE
+     * - Station Incharge → rejects Police Officer
+     * - Commissioner → rejects Station Incharge
      */
     @Override
-    public String rejectLeave(Long leaveId, Long userId) {
+    public String rejectLeave(Long leaveId, Long approverId) {
 
-        // Fetch logged-in incharge
-        User incharge = userRepository.findByUid(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User approver = userRepository.findByUid(approverId)
+                .orElseThrow(() -> new ResourceNotFoundException("Approver not found"));
 
-        // Role validation
-//        if (incharge.getUrole() != UserRole.STATION_INCHARGE) {
-//            throw new RuntimeException("Only station incharge can reject leave");
-//        }
-
-        // Fetch leave request
         LeaveRequest leave = leaveRepository.findById(leaveId)
-                .orElseThrow(() -> new RuntimeException("Leave not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Leave request not found"));
 
         User requester = leave.getUid();
 
         if (requester.getUrole() == UserRole.POLICE_OFFICER &&
-            incharge.getUrole() != UserRole.STATION_INCHARGE) {
+            approver.getUrole() != UserRole.STATION_INCHARGE) {
             throw new RuntimeException("Only Station Incharge can reject police leave");
         }
 
         if (requester.getUrole() == UserRole.STATION_INCHARGE &&
-            incharge.getUrole() != UserRole.COMMISSIONER) {
-            throw new RuntimeException("Only Commissioner can reject incharge leave");
+            approver.getUrole() != UserRole.COMMISSIONER) {
+            throw new RuntimeException("Only Commissioner can reject Station Incharge leave");
         }
 
-        // Update leave status
         leave.setLStatus(RequestStatus.REJECTED);
-        leave.setLapprovedBy(incharge);
-
-        // Persist changes
+        leave.setLapprovedBy(approver);
         leaveRepository.save(leave);
 
-        return "Leave rejected";
+        return "Leave rejected successfully";
     }
+ 
+    
+    @Override
+    public List<LeaveRequest> getPendingPoliceLeaves(Long inchargeId) {
+
+        User incharge = userRepository.findByUid(inchargeId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (incharge.getUrole() != UserRole.STATION_INCHARGE) {
+            throw new RuntimeException("Access denied");
+        }
+
+        return leaveRepository.findPendingLeavesByRoleAndStation(
+                RequestStatus.PENDING,
+                UserRole.POLICE_OFFICER,
+                incharge.getStation().getSid()
+        );
+    }
+    
+    @Override
+    public List<LeaveRequest> getPendingLeavesForCommissioner(Long commissionerId) {
+
+        User commissioner = userRepository.findByUid(commissionerId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (commissioner.getUrole() != UserRole.COMMISSIONER) {
+            throw new RuntimeException("Access denied");
+        }
+
+        return leaveRepository.findPendingLeavesByStation(
+                RequestStatus.PENDING,
+                commissioner.getStation().getSid()
+        );
+    }
+
+    
 }

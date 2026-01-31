@@ -19,7 +19,7 @@ API.interceptors.request.use(
 
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // ---------------- AUTH APIs ----------------
@@ -31,7 +31,7 @@ export const loginUser = async (credentials) => {
     return response.data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || "Invalid Email or Password"
+      error.response?.data?.message || "Invalid Email or Password",
     );
   }
 };
@@ -44,20 +44,33 @@ export const getAllStations = async () => {
     const response = await API.get("/commissioner/stations");
     return response.data;
   } catch (error) {
-    throw new Error("Failed to fetch stations "+error.message);
+    throw new Error("Failed to fetch stations " + error.message);
   }
 };
 
 export const getDutiesByDate = async (date) => {
   const res = await API.get(`/commissioner/duties`, {
-    params: { date }
+    params: { date },
   });
   return res.data;
 };
 
-export const getStationSwapRequests = async () => {
+export const getSwapRequestsByStation = async () => {
   const res = await API.get("/swaps/pending"); // station-scoped via JWT
   return res.data;
+};
+
+export const getLeaveRequestsByStation = async () => {
+  const res = await API.get("/leave/pending");
+  return res.data;
+};
+
+export const approveLeave = async (leaveId) => {
+  await API.put(`/leave/approve/${leaveId}`);
+};
+
+export const rejectLeave = async (leaveId) => {
+  await API.put(`/leave/reject/${leaveId}`);
 };
 
 export default API;

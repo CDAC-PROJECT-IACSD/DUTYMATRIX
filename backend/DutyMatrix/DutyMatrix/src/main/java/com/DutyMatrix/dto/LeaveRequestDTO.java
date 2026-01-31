@@ -1,10 +1,8 @@
 package com.DutyMatrix.dto;
 
-import java.util.Date;
+import java.time.LocalDate;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 //Police Man → APPLY → PENDING
@@ -13,12 +11,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class LeaveRequestDTO {
-    private Date lStartDate;
-    private Date lEndDate;
-    private String lReason;
+
+	private LocalDate startDate;
+    private LocalDate endDate;
+
+    private String reason;
 }
 
 	

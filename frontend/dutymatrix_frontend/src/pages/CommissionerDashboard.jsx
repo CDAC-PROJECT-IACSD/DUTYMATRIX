@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { getAllStations, getDutiesByDate } from "../services/api";
+import {
+  approveLeave,
+  getAllStations,
+  getDutiesByDate,
+  getLeaveRequestsByStation,
+  getSwapRequestsByStation,
+  rejectLeave,
+} from "../services/api";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../auth/AuthContext";
 import "../styles/dashboard.css";
@@ -17,18 +24,41 @@ export default function CommissionerDashboard() {
   const [showDuties, setShowDuties] = useState(false);
   const [showDutyOversight, setShowDutyOversight] = useState(false);
 
+  //Swap Request
+  const [swapRequests, setSwapRequests] = useState([]);
+  const [showSwapRequests, setShowSwapRequests] = useState(false);
+
+  //Leave Requests
+  const [leaveRequests, setLeaveRequests] = useState([]);
+  const [showLeaveRequests, setShowLeaveRequests] = useState(false);
+
   useEffect(() => {
     if (showTable) {
       getAllStations().then(setStations).catch(console.error);
     }
   }, [showTable]);
 
- const loadDuties = () => {
+  useEffect(() => {
+    if (showSwapRequests) {
+      getSwapRequestsByStation().then(setSwapRequests).catch(console.error);
+    }
+  }, [showSwapRequests]);
+
+  useEffect(() => {
+    if (showLeaveRequests) {
+      getLeaveRequestsByStation().then(setLeaveRequests).catch(console.error);
+    }
+  }, [showLeaveRequests]);
+
+  const loadDuties = () => {
     if (!selectedDate) return;
-    getDutiesByDate(selectedDate)
-      .then(setDuties)
-      .catch(console.error);
+    getDutiesByDate(selectedDate).then(setDuties).catch(console.error);
     setShowDuties(true);
+  };
+
+  const loadSwap = () => {
+    // Implement swap request loading logic here
+    getSwapRequestsByStation().then(setSwapRequests).catch(console.error);
   };
 
   return (
@@ -44,10 +74,17 @@ export default function CommissionerDashboard() {
             className="dashboard-btn btn-primary"
             onClick={() => {
               setShowTable(!showTable);
-              if (!showTable) setShowDutyOversight(false);
+              if (!showTable) {
+                setShowDutyOversight(false);
+                setShowSwapRequests(false);
+              }
             }}
           >
-            <img src="/src/assets/checkok.gif" alt="Icon" className="btn-icon" />
+            <img
+              src="/src/assets/checkok.gif"
+              alt="Icon"
+              className="btn-icon"
+            />
             {showTable ? "Hide Officers" : "View Station Officers"}
           </button>
 
@@ -56,21 +93,70 @@ export default function CommissionerDashboard() {
             className="dashboard-btn btn-success"
             onClick={() => {
               setShowDutyOversight(!showDutyOversight);
-              if (!showDutyOversight) setShowTable(false);
+              if (!showDutyOversight) {
+                setShowTable(false);
+                setShowSwapRequests(false);
+              }
             }}
           >
-            <img src="/src/assets/checkok.gif" alt="Icon" className="btn-icon" />
+            <img
+              src="/src/assets/checkok.gif"
+              alt="Icon"
+              className="btn-icon"
+            />
             {showDutyOversight ? "Hide Duty Oversight" : "View Duty Oversight"}
+          </button>
+
+          {/* ======================= Swap Request Show Button ================= */}
+
+          <button
+            className="dashboard-btn btn-warning"
+            onClick={() => {
+              setShowSwapRequests(!showSwapRequests);
+              if (!showSwapRequests) {
+                setShowTable(false);
+                setShowDutyOversight(false);
+              }
+            }}
+          >
+            <img
+              src="/src/assets/checkok.gif"
+              alt="Icon"
+              className="btn-icon"
+            />
+            {showSwapRequests ? "Hide Swap Requests" : "View Swap Requests"}
+          </button>
+
+          {/* ======================= Leave Request Show Button ================= */}
+          <button
+            className="dashboard-btn btn-danger"
+            onClick={() => {
+              setShowLeaveRequests(!showLeaveRequests);
+              if (!showLeaveRequests) {
+                setShowTable(false);
+                setShowDutyOversight(false);
+                setShowSwapRequests(false);
+              }
+            }}
+          >
+            <img
+              src="/src/assets/checkok.gif"
+              alt="Icon"
+              className="btn-icon"
+            />
+            {showLeaveRequests ? "Hide Leave Requests" : "View Leave Requests"}
           </button>
         </div>
 
-        {/* Content Area */}
+        {/* ==================Content Area==================== */}
         <div className="content-area mt-4">
           {showTable && (
             <>
               <div className="row g-3">
                 <div className="col-md-6">
-                  <label className="form-label fw-semibold">Filter by Role</label>
+                  <label className="form-label fw-semibold">
+                    Filter by Role
+                  </label>
                   <select
                     className="form-select"
                     value={selectedRole}
@@ -83,7 +169,9 @@ export default function CommissionerDashboard() {
                 </div>
 
                 <div className="col-md-6">
-                  <label className="form-label fw-semibold">Filter by Rank</label>
+                  <label className="form-label fw-semibold">
+                    Filter by Rank
+                  </label>
                   <select
                     className="form-select"
                     value={selectedRank}
@@ -118,7 +206,8 @@ export default function CommissionerDashboard() {
                       {station.users
                         .filter(
                           (u) =>
-                            (selectedRole === "All" || u.role === selectedRole) &&
+                            (selectedRole === "All" ||
+                              u.role === selectedRole) &&
                             (selectedRank === "All" || u.rank === selectedRank),
                         )
                         .map((u) => (
@@ -153,7 +242,10 @@ export default function CommissionerDashboard() {
                 </div>
 
                 <div className="col-md-3">
-                  <button className="btn btn-success w-100" onClick={loadDuties}>
+                  <button
+                    className="btn btn-success w-100"
+                    onClick={loadDuties}
+                  >
                     View Duty Roster
                   </button>
                 </div>
@@ -207,6 +299,158 @@ export default function CommissionerDashboard() {
                   </table>
                 </div>
               )}
+            </>
+          )}
+
+          {/* Swap Requests Section */}
+          {showSwapRequests && (
+            <>
+              <hr className="my-5" />
+              <h4 className="fw-bold">Swap Requests</h4>
+
+              <div className="card mt-3">
+                <table className="table table-bordered table-striped mb-0">
+                  <thead className="table-dark">
+                    <tr>
+                      <th>Swap ID</th>
+                      <th>Requesting Officer</th>
+                      <th>Target Officer</th>
+                      <th>Shift</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {swapRequests.length === 0 && (
+                      <tr>
+                        <td colSpan="5" className="text-center">
+                          No swap requests found
+                        </td>
+                      </tr>
+                    )}
+
+                    {swapRequests.map((s) => (
+                      <tr key={s.swapId}>
+                        <td>{s.swapId}</td>
+                        <td>{s.requestingUser}</td>
+                        <td>{s.targetUser}</td>
+                        <td>{s.shiftType}</td>
+                        <td>
+                          <span
+                            className={`badge ${
+                              s.status === "PENDING"
+                                ? "bg-warning text-dark"
+                                : s.status === "APPROVED"
+                                  ? "bg-success"
+                                  : "bg-danger"
+                            }`}
+                          >
+                            {s.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
+
+          {/* Leave Requests Section */}
+          {showLeaveRequests && (
+            <>
+              <hr className="my-5" />
+              <h4 className="fw-bold">Leave Requests</h4>
+
+              <div className="card mt-3">
+                <table className="table table-bordered table-striped mb-0">
+                  <thead className="table-dark">
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Role</th>
+                      <th>From</th>
+                      <th>To</th>
+                      <th>Reason</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {leaveRequests.length === 0 ? (
+                      <tr>
+                        <td colSpan="8" className="text-center">
+                          No leave requests found
+                        </td>
+                      </tr>
+                    ) : (
+                      leaveRequests.map((l) => (
+                        <tr key={l.leaveId}>
+                          <td>{l.leaveId}</td>
+                          <td>{l.userName}</td>
+                          <td>{l.userRole}</td>
+                          <td>{l.startDate}</td>
+                          <td>{l.endDate}</td>
+                          <td>{l.reason}</td>
+                          <td>
+                            <span
+                              className={`badge ${
+                                l.status === "PENDING"
+                                  ? "bg-warning text-dark"
+                                  : l.status === "APPROVED"
+                                    ? "bg-success"
+                                    : "bg-danger"
+                              }`}
+                            >
+                              {l.status}
+                            </span>
+                          </td>
+
+                          {/* ACTIONS */}
+                          <td>
+                            {l.userRole === "STATION_INCHARGE" &&
+                            l.status === "PENDING" ? (
+                              <>
+                                <button
+                                  className="btn btn-sm btn-success me-2"
+                                  onClick={() =>
+                                    approveLeave(l.leaveId).then(() =>
+                                      setLeaveRequests(
+                                        leaveRequests.filter(
+                                          (r) => r.leaveId !== l.leaveId,
+                                        ),
+                                      ),
+                                    )
+                                  }
+                                >
+                                  Approve
+                                </button>
+
+                                <button
+                                  className="btn btn-sm btn-danger"
+                                  onClick={() =>
+                                    rejectLeave(l.leaveId).then(() =>
+                                      setLeaveRequests(
+                                        leaveRequests.filter(
+                                          (r) => r.leaveId !== l.leaveId,
+                                        ),
+                                      ),
+                                    )
+                                  }
+                                >
+                                  Reject
+                                </button>
+                              </>
+                            ) : (
+                              <span className="text-muted">View Only</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </>
           )}
         </div>
