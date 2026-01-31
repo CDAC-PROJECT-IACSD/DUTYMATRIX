@@ -56,6 +56,13 @@ export default function CommissionerDashboard() {
     setShowDuties(true);
   };
 
+  const resetViews = () => {
+    setShowTable(false);
+    setShowDutyOversight(false);
+    setShowSwapRequests(false);
+    setShowLeaveRequests(false);
+  };
+
   const loadSwap = () => {
     // Implement swap request loading logic here
     getAllSwapsForCommissioner().then(setSwapRequests).catch(console.error);
@@ -73,11 +80,8 @@ export default function CommissionerDashboard() {
           <button
             className="dashboard-btn btn-primary"
             onClick={() => {
-              setShowTable(!showTable);
-              if (!showTable) {
-                setShowDutyOversight(false);
-                setShowSwapRequests(false);
-              }
+              resetViews();
+              setShowTable(true);
             }}
           >
             <img
@@ -92,11 +96,8 @@ export default function CommissionerDashboard() {
           <button
             className="dashboard-btn btn-success"
             onClick={() => {
-              setShowDutyOversight(!showDutyOversight);
-              if (!showDutyOversight) {
-                setShowTable(false);
-                setShowSwapRequests(false);
-              }
+              resetViews();
+              setShowDutyOversight(true);
             }}
           >
             <img
@@ -112,11 +113,8 @@ export default function CommissionerDashboard() {
           <button
             className="dashboard-btn btn-warning"
             onClick={() => {
-              setShowSwapRequests(!showSwapRequests);
-              if (!showSwapRequests) {
-                setShowTable(false);
-                setShowDutyOversight(false);
-              }
+              resetViews();
+              setShowSwapRequests(true);
             }}
           >
             <img
@@ -131,12 +129,8 @@ export default function CommissionerDashboard() {
           <button
             className="dashboard-btn btn-danger"
             onClick={() => {
-              setShowLeaveRequests(!showLeaveRequests);
-              if (!showLeaveRequests) {
-                setShowTable(false);
-                setShowDutyOversight(false);
-                setShowSwapRequests(false);
-              }
+              resetViews();
+              setShowLeaveRequests(true);
             }}
           >
             <img
