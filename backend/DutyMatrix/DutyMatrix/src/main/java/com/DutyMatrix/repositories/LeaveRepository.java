@@ -35,7 +35,7 @@ public interface LeaveRepository extends JpaRepository<LeaveRequest, Long> {
 	@Query("""
 		    SELECT l
 		    FROM LeaveRequest l
-		    WHERE l.lStatus = 'PENDING'
+		    
 		""")
 		List<LeaveRequest> findAllPendingLeaves();
 }

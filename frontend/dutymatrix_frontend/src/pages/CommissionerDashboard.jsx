@@ -63,6 +63,10 @@ export default function CommissionerDashboard() {
     setShowLeaveRequests(false);
   };
 
+  const refreshLeaves = () => {
+    getLeaveRequestsByStation().then(setLeaveRequests).catch(console.error);
+  };
+
   const loadSwap = () => {
     // Implement swap request loading logic here
     getAllSwapsForCommissioner().then(setSwapRequests).catch(console.error);
@@ -408,13 +412,7 @@ export default function CommissionerDashboard() {
                                 <button
                                   className="btn btn-sm btn-success me-2"
                                   onClick={() =>
-                                    approveLeave(l.leaveId).then(() =>
-                                      setLeaveRequests(
-                                        leaveRequests.filter(
-                                          (r) => r.leaveId !== l.leaveId,
-                                        ),
-                                      ),
-                                    )
+                                    approveLeave(l.leaveId).then(refreshLeaves)
                                   }
                                 >
                                   Approve
@@ -423,13 +421,7 @@ export default function CommissionerDashboard() {
                                 <button
                                   className="btn btn-sm btn-danger"
                                   onClick={() =>
-                                    rejectLeave(l.leaveId).then(() =>
-                                      setLeaveRequests(
-                                        leaveRequests.filter(
-                                          (r) => r.leaveId !== l.leaveId,
-                                        ),
-                                      ),
-                                    )
+                                    rejectLeave(l.leaveId).then(refreshLeaves)
                                   }
                                 >
                                   Reject
