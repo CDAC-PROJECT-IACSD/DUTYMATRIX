@@ -7,21 +7,17 @@
 .login-page {
   height: 100vh;
   width: 100%;
-  background-image: 
-    linear-gradient(rgba(10, 25, 47, 0.85), rgba(10, 25, 47, 0.95)), 
-    url('https://www.transparenttextures.com/patterns/cubes.png'); /* Subtle pattern overlay */
-  background-color: #0a192f; /* Deep Navy Blue */
+  background-image:
+    linear-gradient(rgba(10, 25, 47, 0.85), rgba(10, 25, 47, 0.95)),
+    url('https://www.transparenttextures.com/patterns/cubes.png');
+  background-color: #0a192f;
   background-size: cover;
   background-position: center;
   display: flex;
   align-items: center;
-<<<<<<< HEAD
-  background: #676161;
-=======
   justify-content: center;
   font-family: 'Roboto', sans-serif;
   overflow: hidden;
->>>>>>> 2364d764d27152b40d7d11aaa6f0f17529d583df
 }
 
 /* =========================================
@@ -29,13 +25,6 @@
    ========================================= */
 
 .login-card {
-<<<<<<< HEAD
-  display: flex;
-  width: 900px;
-  height: 500px;
-  background: #817a7a;
-  border-radius: 16px;
-=======
   width: 1000px;
   min-height: 600px;
   background: rgba(16, 33, 62, 0.8);
@@ -43,54 +32,45 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
->>>>>>> 2364d764d27152b40d7d11aaa6f0f17529d583df
   overflow: hidden;
   position: relative;
+  display: flex;
 }
 
-<<<<<<< HEAD
-.login-image {
-  flex: 1;
-  background: #393535;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.829);
-=======
 /* =========================================
    LEFT SIDE - IMAGE SECTION
    ========================================= */
 
 .login-image-section {
   position: relative;
+  flex: 1;
   background: url('/src/assets/login_img1.png') no-repeat center center/cover;
   color: white;
->>>>>>> 2364d764d27152b40d7d11aaa6f0f17529d583df
 }
 
 .login-image-section::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, rgba(10, 25, 47, 0.6), rgba(10, 25, 47, 0.9));
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 25, 47, 0.6),
+    rgba(10, 25, 47, 0.9)
+  );
 }
 
 .brand-content {
   position: relative;
   z-index: 2;
   padding: 40px;
+  text-align: center;
 }
 
 .brand-title {
-  font-family: 'Playfair Display', serif; /* Authoritative font */
+  font-family: 'Playfair Display', serif;
   font-size: 2.5rem;
-  font-weight: 700;
   letter-spacing: 2px;
   color: #fff;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
   margin-bottom: 5px;
 }
 
@@ -105,7 +85,7 @@
 .brand-divider {
   width: 60px;
   height: 3px;
-  background: #ecc94b; /* Gold accent */
+  background: #ecc94b;
   margin: 0 auto 20px;
 }
 
@@ -120,27 +100,17 @@
    ========================================= */
 
 .login-form-section {
+  flex: 1;
   padding: 50px;
   background: rgba(16, 33, 62, 0.4);
   display: flex;
   align-items: center;
-<<<<<<< HEAD
-  background: #c2b9b9;
-  border-radius: 8px;
-  padding: 12px;
-  margin: 15px 0 20px 0;
-=======
->>>>>>> 2364d764d27152b40d7d11aaa6f0f17529d583df
 }
 
 .form-wrapper {
   width: 100%;
   max-width: 400px;
-  margin: 0 auto;
-}
-
-.form-label {
-  letter-spacing: 1px;
+  margin: auto;
 }
 
 /* =========================================
@@ -148,27 +118,19 @@
    ========================================= */
 
 .input-group-custom {
-  position: relative;
   display: flex;
   align-items: center;
   border-bottom: 2px solid #2d3748;
-  transition: all 0.3s ease;
+  transition: 0.3s;
 }
 
 .input-group-custom:focus-within {
-  border-bottom-color: #ecc94b; /* Gold underline on focus */
+  border-bottom-color: #ecc94b;
 }
 
 .input-icon {
   color: #718096;
   margin-right: 10px;
-  width: 20px;
-  height: 20px;
-  transition: color 0.3s ease;
-}
-
-.input-group-custom:focus-within .input-icon {
-  color: #ecc94b;
 }
 
 .form-control-custom {
@@ -177,79 +139,48 @@
   color: #fff;
   width: 100%;
   padding: 10px 0;
-  font-size: 1rem;
 }
 
 .form-control-custom:focus {
   outline: none;
-  background: transparent;
-  box-shadow: none;
-  color: #fff;
-}
-
-.form-control-custom::placeholder {
-  color: #4a5568;
 }
 
 .login-btn {
-  background: linear-gradient(90deg, #d69e2e 0%, #ecc94b 100%); /* Gold Gradient */
+  background: linear-gradient(90deg, #d69e2e, #ecc94b);
   color: #1a202c;
   font-weight: 700;
   padding: 15px;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
 .login-btn:hover {
-<<<<<<< HEAD
-  background: #b0abab;
-}
-
-.signup-text {
-  margin-top: 20px;
-  text-align: center;
-  color: #dbd3d3;
-}
-
-.signup-text span {
-  color: #fff;
-=======
   transform: translateY(-2px);
-  box-shadow: 0 10px 15px rgba(214, 158, 46, 0.4); /* Gold glow */
+  box-shadow: 0 10px 15px rgba(214, 158, 46, 0.4);
 }
 
 .cursor-pointer {
->>>>>>> 2364d764d27152b40d7d11aaa6f0f17529d583df
   cursor: pointer;
 }
-
 
 .cursor-pointer:hover {
   text-decoration: underline;
 }
 
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
 @media (max-width: 768px) {
   .login-card {
-    width: 90%;
-    min-height: auto;
     flex-direction: column;
-  }
-  
-  .login-image-section {
-    display: none; /* Hide image on small screens if not handled by bootstrap d-none class already */
+    width: 90%;
   }
 
-  .login-form-section {
-    padding: 30px;
-  }
-  
-  .brand-title {
-    font-size: 2rem;
+  .login-image-section {
+    display: none;
   }
 }
