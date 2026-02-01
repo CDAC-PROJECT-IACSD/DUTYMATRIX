@@ -11,6 +11,9 @@ import com.DutyMatrix.pojo.Station;
 import com.DutyMatrix.pojo.User;
 import com.DutyMatrix.repositories.StationRepository;
 import com.DutyMatrix.repositories.UserRepository;
+import com.DutyMatrix.dto.StationUserDTO;
+import com.DutyMatrix.pojo.UserRole;
+import java.util.List;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -39,6 +42,22 @@ public class UserServiceImpl implements UserService {
 		User saved = userRepo.save(user);
 		
 		return "New user created "+saved.getUemail();
+	}
+
+	
+	
+	@Override
+	public List<StationUserDTO> getOfficersByStation(Long stationId) {
+	    List<UserRole> roles = List.of(UserRole.POLICE_OFFICER);
+	    return userRepo.findByStation_SidAndUroleIn(stationId, roles)
+	            .stream()
+	            .map(user -> new StationUserDTO(
+	                    user.getUid(),
+	                    user.getUname(),
+	                    user.getUrole(),
+	                    user.getUrank()
+	            ))
+	            .toList();
 	}
 
 }
