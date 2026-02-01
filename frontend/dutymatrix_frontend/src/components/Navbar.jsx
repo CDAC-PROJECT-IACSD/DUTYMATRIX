@@ -53,12 +53,7 @@ export default function Navbar() {
           {/* Station Incharge Links */}
           {isStationIncharge && (
             <>
-              <Link to="/shifts" className="btn btn-outline-light btn-sm">
-                Create Shift
-              </Link>
-              <Link to="/swap-approval" className="btn btn-outline-light btn-sm">
-                Swap Approval
-              </Link>
+            {/* if any thing extra we want to add then we can add it here.... */}
             </>
           )}
 

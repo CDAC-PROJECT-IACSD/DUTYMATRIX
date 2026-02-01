@@ -1,91 +1,65 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import api from "../api/axios";
 
-const SwapApproval = () => {
-  const [pendingSwaps, setPendingSwaps] = useState([]);
+export default function SwapApprovalManual() {
+  const [swapId, setSwapId] = useState("");
   const [message, setMessage] = useState("");
 
-  // 🔹 Fetch pending swap requests
-  const loadPendingSwaps = async () => {
+  const approveSwap = async () => {
     try {
-      const res = await api.get("/swaps/pending");
-      setPendingSwaps(res.data);
+      await api.put(`/swaps/${swapId}/approve`, null, {
+        responseType: "text",
+      });
+      setMessage("Swap approved successfully ✅");
+      setSwapId("");
     } catch (err) {
-      console.error(err);
-      setMessage("Failed to load pending swaps ❌");
+      setMessage("Approval failed ❌");
     }
   };
 
-  useEffect(() => {
-    loadPendingSwaps();
-  }, []);
-
-  // 🔹 Approve swap
-  const approveSwap = async (swapId) => {
+  const rejectSwap = async () => {
     try {
-      await api.put(`/swaps/${swapId}/approve`);
-      setMessage("Swap approved ✅");
-      loadPendingSwaps(); // refresh list
-    } catch (err) {
-      console.error(err);
-      setMessage(err.response?.data || "Approve failed ❌");
-    }
-  };
-
-  // 🔹 Reject swap
-  const rejectSwap = async (swapId) => {
-    try {
-      await api.put(`/swaps/${swapId}/reject`);
+      await api.put(`/swaps/${swapId}/reject`, null, {
+        responseType: "text",
+      });
       setMessage("Swap rejected ❌");
-      loadPendingSwaps(); // refresh list
+      setSwapId("");
     } catch (err) {
-      console.error(err);
-      setMessage(err.response?.data || "Reject failed ❌");
+      setMessage("Rejection failed ❌");
     }
   };
 
   return (
-    <div style={{ maxWidth: "800px", margin: "auto" }}>
-      <h2>Pending Shift Swap Requests</h2>
+    <div className="card p-4 mt-3">
+      <h5 className="fw-bold mb-3">Swap Approval</h5>
 
-      {message && <p>{message}</p>}
+      <input
+        type="number"
+        className="form-control mb-3"
+        placeholder="Enter Swap ID"
+        value={swapId}
+        onChange={(e) => setSwapId(e.target.value)}
+      />
 
-      {pendingSwaps.length === 0 ? (
-        <p>No pending swap requests</p>
-      ) : (
-        <table border="1" width="100%" cellPadding="8">
-          <thead>
-            <tr>
-              <th>Swap ID</th>
-              <th>Requesting Officer</th>
-              <th>Target Officer</th>
-              <th>Shift Type</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pendingSwaps.map((swap) => (
-              <tr key={swap.swapId}>
-                <td>{swap.swapId}</td>
-                <td>{swap.requestingUser}</td>
-                <td>{swap.targetUser}</td>
-                <td>{swap.shiftType}</td>
-                <td>
-                  <button onClick={() => approveSwap(swap.swapId)}>
-                    Approve
-                  </button>
-                  &nbsp;
-                  <button onClick={() => rejectSwap(swap.swapId)}>
-                    Reject
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      <div>
+        <button
+          className="btn btn-success me-2"
+          onClick={approveSwap}
+          disabled={!swapId}
+        >
+          Approve
+        </button>
+
+        <button
+          className="btn btn-danger"
+          onClick={rejectSwap}
+          disabled={!swapId}
+        >
+          Reject
+        </button>
+      </div>
+
+      {message && <div className="alert alert-info mt-3">{message}</div>}
     </div>
   );
-};
-
-export default SwapApproval;
+}

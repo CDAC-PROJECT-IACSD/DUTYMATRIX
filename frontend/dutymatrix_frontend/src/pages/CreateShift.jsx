@@ -1,13 +1,15 @@
 import { useState } from "react";
 import api from "../api/axios";
+import { useAuth } from "../auth/AuthContext";
 
 const CreateShift = () => {
+  const { user } = useAuth(); // ✅ logged-in station incharge
+
   const [formData, setFormData] = useState({
     shtype: "DAY_SHIFT",
     shDate: "",
     shStartTime: "",
     shEndTime: "",
-    stationId: "",
     assignedUserId: "",
   });
 
@@ -22,9 +24,18 @@ const CreateShift = () => {
 
     try {
       const payload = {
-        ...formData,
-        stationId: Number(formData.stationId),
-        assignedUserId: Number(formData.assignedUserId),
+        shtype: formData.shtype,
+        shDate: formData.shDate,
+        shStartTime: formData.shStartTime,
+        shEndTime: formData.shEndTime,
+
+        // ✅ REQUIRED BY BACKEND
+        stationId: user.stationId,
+
+        // optional
+        assignedUserId: formData.assignedUserId
+          ? Number(formData.assignedUserId)
+          : null,
       };
 
       const res = await api.post("/shifts", payload);
@@ -47,8 +58,13 @@ const CreateShift = () => {
         <input type="date" name="shDate" onChange={handleChange} required />
         <input type="time" name="shStartTime" onChange={handleChange} required />
         <input type="time" name="shEndTime" onChange={handleChange} required />
-        <input type="number" name="stationId" placeholder="Station ID" onChange={handleChange} required />
-        <input type="number" name="assignedUserId" placeholder="Officer ID" onChange={handleChange} required />
+
+        <input
+          type="number"
+          name="assignedUserId"
+          placeholder="Officer ID (optional)"
+          onChange={handleChange}
+        />
 
         <button type="submit">Create Shift</button>
       </form>

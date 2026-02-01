@@ -7,6 +7,7 @@ const SwapShift = () => {
     targetUserId: "",
     reason: "",
   });
+
   const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
@@ -26,11 +27,12 @@ const SwapShift = () => {
       setMessage("Swap request sent successfully ✅");
       setForm({ shiftId: "", targetUserId: "", reason: "" });
     } catch (err) {
-      const msg =
-        err.response?.data?.message ||
-        err.response?.data ||
-        "Swap request failed ❌";
-      setMessage(msg);
+      console.error(err.response?.data);
+      setMessage(
+        typeof err.response?.data === "string"
+          ? err.response.data
+          : err.response?.data?.message || "Swap request failed ❌"
+      );
     }
   };
 
@@ -42,7 +44,7 @@ const SwapShift = () => {
         <input
           type="number"
           name="shiftId"
-          placeholder="My Shift ID"
+          placeholder="My Assigned Shift ID"
           value={form.shiftId}
           onChange={handleChange}
           required
