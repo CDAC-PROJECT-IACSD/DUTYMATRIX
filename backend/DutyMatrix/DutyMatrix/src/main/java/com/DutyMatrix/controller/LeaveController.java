@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.DutyMatrix.dto.JwtUserDTO;
 import com.DutyMatrix.dto.LeaveRequestDTO;
-import com.DutyMatrix.repositories.UserRepository;
+import com.DutyMatrix.dto.LeaveResponseDTO;
 import com.DutyMatrix.services.LeaveService;
 
 import lombok.AllArgsConstructor;
@@ -29,8 +29,8 @@ public class LeaveController {
 
     private final LeaveService leaveService;
 
-    // 1️ Police applies leave
-    @PreAuthorize("hasAuthority('ROLE_POLICE_OFFICER')")
+    // Police applies leave
+    @PreAuthorize("hasRole('POLICE_OFFICER')")
     @PostMapping("/apply")
     public ResponseEntity<String> applyLeave(
             @RequestBody LeaveRequestDTO dto,
@@ -41,7 +41,7 @@ public class LeaveController {
         );
     }
 
-    // APPROVE LEAVE
+    // Approve leave
     @PreAuthorize("hasAnyRole('STATION_INCHARGE','COMMISSIONER')")
     @PutMapping("/approve/{leaveId}")
     public ResponseEntity<String> approveLeave(
@@ -53,7 +53,7 @@ public class LeaveController {
         );
     }
 
-    // REJECT LEAVE
+    // Reject leave
     @PreAuthorize("hasAnyRole('STATION_INCHARGE','COMMISSIONER')")
     @PutMapping("/reject/{leaveId}")
     public ResponseEntity<String> rejectLeave(
@@ -64,16 +64,15 @@ public class LeaveController {
                 leaveService.rejectLeave(leaveId, user.getUserId())
         );
     }
-    
-    @GetMapping("/pending")
+
+    // Commissioner pending leaves
     @PreAuthorize("hasRole('COMMISSIONER')")
+    @GetMapping("/pending")
     public ResponseEntity<List<LeaveResponseDTO>> getPendingLeaves(
             @AuthenticationPrincipal JwtUserDTO user) {
 
         return ResponseEntity.ok(
-            leaveService.getPendingLeavesForCommissioner(user.getUserId())
+                leaveService.getPendingLeavesForCommissioner(user.getUserId())
         );
     }
-
-
 }
