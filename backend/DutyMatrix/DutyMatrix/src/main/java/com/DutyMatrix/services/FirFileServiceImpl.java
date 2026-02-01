@@ -31,9 +31,7 @@ public class FirFileServiceImpl implements FirFileService {
 	public FIR fileFir(FirFileDTO firdto) {
 		User user = userRepo.findById(firdto.getFilledByUserId()).orElseThrow(()-> new ResourceNotFoundException("No user found"));
 		
-		if (user.getUrole() == UserRole.POLICE_OFFICER) {
-		    throw new IllegalStateException("Police officer cannot file FIR");
-		}
+		// Check removed to allow police officers to file FIRs
 
 				
 		FIR fir = new FIR();
