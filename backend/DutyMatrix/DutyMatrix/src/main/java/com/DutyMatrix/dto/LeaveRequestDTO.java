@@ -13,8 +13,5 @@ public class LeaveRequestDTO {
     private LocalDate lStartDate;
     private LocalDate lEndDate;
     private String lReason;
-	private LocalDate startDate;
-    private LocalDate endDate;
 
-    private String reason;
 }

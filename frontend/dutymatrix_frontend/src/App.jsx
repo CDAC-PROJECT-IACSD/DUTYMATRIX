@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
-
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Login from "./pages/Login";
 import PoliceOfficerDashboard from "./pages/PoliceOfficerDashboard";
 import StationInchargeDashboard from "./pages/StationInchargeDashboard";
