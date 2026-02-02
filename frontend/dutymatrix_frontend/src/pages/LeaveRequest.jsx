@@ -1,65 +1,53 @@
 import { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../auth/AuthContext";
-import "../styles/dashboard.css";
 
 export default function LeaveRequest() {
-  const { user, token } = useAuth();
+  const { token } = useAuth();
 
   const [form, setForm] = useState({
-    lStartDate: "",
-    lEndDate: "",
-    lReason: ""
+    startDate: "",
+    endDate: "",
+    reason: ""
   });
 
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState("");
+  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // ✅ REQUIRED FUNCTION (your error was here earlier)
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setMessage("");
     setError("");
-    setSuccess("");
+    setLoading(true);
 
     try {
-      await axios.post(
-        "http://localhost:9090/leave/apply", // matches controller
-        {
-          lStartDate: formData.lStartDate,
-          lEndDate: formData.lEndDate,
-          lReason: formData.lReason,
-        },
+      const res = await axios.post(
+        "http://localhost:9090/leave/apply",
+        form,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // REQUIRED
-            "Content-Type": "application/json",
-          },
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
         }
       );
 
       setMessage(res.data);
       setForm({
-        lStartDate: "",
-        lEndDate: "",
-        lReason: ""
+        startDate: "",
+        endDate: "",
+        reason: ""
       });
+
     } catch (err) {
       console.error(err);
-
-      // ✅ SAFE ERROR RENDERING
       setError(
         err.response?.data?.message ||
-        err.response?.data ||
         "Failed to submit leave request"
       );
     } finally {
@@ -68,11 +56,8 @@ export default function LeaveRequest() {
   };
 
   return (
-    <div className="dashboard-container">
-      <h3 className="dashboard-title">Leave Request</h3>
-      <h5 className="welcome-message">
-        Welcome {user?.userName}
-      </h5>
+    <div className="container mt-4">
+      <h3 className="mb-3">Apply Leave</h3>
 
       <form onSubmit={handleSubmit} className="card p-4 shadow-sm">
 
@@ -80,9 +65,9 @@ export default function LeaveRequest() {
           <label className="form-label">Start Date</label>
           <input
             type="date"
-            name="lStartDate"
+            name="startDate"
             className="form-control"
-            value={form.lStartDate}
+            value={form.startDate}
             onChange={handleChange}
             required
           />
@@ -92,9 +77,9 @@ export default function LeaveRequest() {
           <label className="form-label">End Date</label>
           <input
             type="date"
-            name="lEndDate"
+            name="endDate"
             className="form-control"
-            value={form.lEndDate}
+            value={form.endDate}
             onChange={handleChange}
             required
           />
@@ -103,25 +88,31 @@ export default function LeaveRequest() {
         <div className="mb-3">
           <label className="form-label">Reason</label>
           <textarea
-            name="lReason"
+            name="reason"
             className="form-control"
             rows="3"
-            value={form.lReason}
+            value={form.reason}
             onChange={handleChange}
             required
           />
         </div>
 
-        <button type="submit" className="btn btn-primary">
-          Submit Leave Request
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={loading}
+        >
+          {loading ? "Submitting..." : "Submit Leave Request"}
         </button>
 
         {message && (
           <p className="text-success mt-3">{message}</p>
         )}
+
         {error && (
           <p className="text-danger mt-3">{error}</p>
         )}
+
       </form>
     </div>
   );

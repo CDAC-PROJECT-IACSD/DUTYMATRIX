@@ -123,6 +123,7 @@
   align-items: center;
   border-bottom: 2px solid #2d3748;
   transition: 0.3s;
+  margin-bottom: 15px;
 }
 
 .input-group-custom:focus-within {
@@ -144,6 +145,20 @@
 
 .form-control-custom:focus {
   outline: none;
+}
+
+.form-select-custom {
+  background: transparent;
+  border: none;
+  color: #fff;
+  width: 100%;
+  padding: 10px 0;
+  cursor: pointer;
+}
+
+.form-select-custom:focus {
+  outline: none;
+  background: #0a192f; 
 }
 
 .login-btn {
