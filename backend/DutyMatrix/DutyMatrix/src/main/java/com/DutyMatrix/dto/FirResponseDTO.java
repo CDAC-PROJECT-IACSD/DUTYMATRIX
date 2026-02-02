@@ -1,5 +1,7 @@
 package com.DutyMatrix.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,4 +13,6 @@ public class FirResponseDTO {
     private String stationName;
     private String filedBy;
     private String investigatingOfficer;
+    private String crimeDescription;
+    private LocalDateTime crimeDateTime;	
 }

@@ -1,6 +1,6 @@
 package com.DutyMatrix.pojo;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -32,8 +32,8 @@ public class FIR {
 	private String crimeType;
 	private String crimeDescription;
 	private String crimeLocation;
-	private Date crimeDateTime;
-	private Date firDateTime;
+	private LocalDateTime crimeDateTime;
+	private LocalDateTime firDateTime;
 	private String sectionsApplied;
 	private Boolean accussedKnown;
 	private String accusedName;

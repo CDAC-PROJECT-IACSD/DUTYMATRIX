@@ -3,11 +3,10 @@ package com.DutyMatrix.services;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import com.DutyMatrix.custom_exception.ResourceNotFoundException;
 import com.DutyMatrix.dto.LeaveRequestDTO;
 import com.DutyMatrix.dto.LeaveResponseDTO;
-import com.DutyMatrix.custom_exception.ResourceNotFoundException;
 import com.DutyMatrix.pojo.LeaveRequest;
 import com.DutyMatrix.pojo.RequestStatus;
 import com.DutyMatrix.pojo.User;
@@ -15,6 +14,7 @@ import com.DutyMatrix.pojo.UserRole;
 import com.DutyMatrix.repositories.LeaveRepository;
 import com.DutyMatrix.repositories.UserRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -27,6 +27,9 @@ public class LeaveServiceImpl implements LeaveService {
 
     /**
      * APPLY LEAVE
+     * - Police Officer → PENDING (approved by Station Incharge)
+     * - Station Incharge → PENDING (approved by Commissioner)
+     * - Commissioner → AUTO APPROVED
      */
     @Override
     public String applyLeave(LeaveRequestDTO dto, Long userId) {
@@ -35,12 +38,12 @@ public class LeaveServiceImpl implements LeaveService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         LeaveRequest leave = new LeaveRequest();
-        leave.setLStartDate(dto.getLStartDate());
-        leave.setLEndDate(dto.getLEndDate());
-        leave.setLReason(dto.getLReason());
+        leave.setLStatDate(dto.getStartDate());
+        leave.setLEndDate(dto.getEndDate());
+        leave.setLReason(dto.getReason());
         leave.setUid(user);
 
-        // Commissioner → auto approve
+        // Commissioner → auto approval
         if (user.getUrole() == UserRole.COMMISSIONER) {
             leave.setLStatus(RequestStatus.APPROVED);
             leave.setLapprovedBy(user);
@@ -48,14 +51,22 @@ public class LeaveServiceImpl implements LeaveService {
             return "Commissioner leave auto-approved";
         }
 
-        // Officer or Incharge → pending
-        leave.setLStatus(RequestStatus.PENDING);
-        leaveRepository.save(leave);
-        return "Leave request submitted";
+        // Police Officer or Station Incharge → pending
+        if (user.getUrole() == UserRole.POLICE_OFFICER ||
+            user.getUrole() == UserRole.STATION_INCHARGE) {
+
+            leave.setLStatus(RequestStatus.PENDING);
+            leaveRepository.save(leave);
+            return "Leave request submitted and pending approval";
+        }
+
+        throw new RuntimeException("Invalid role for leave request");
     }
 
     /**
      * APPROVE LEAVE
+     * - Station Incharge → approves Police Officer
+     * - Commissioner → approves Station Incharge
      */
     @Override
     public String approveLeave(Long leaveId, Long approverId) {
@@ -68,7 +79,7 @@ public class LeaveServiceImpl implements LeaveService {
 
         User requester = leave.getUid();
 
-        // Police Officer → Station Incharge
+        // Police Officer leave → Station Incharge approval
         if (requester.getUrole() == UserRole.POLICE_OFFICER) {
 
             if (approver.getUrole() != UserRole.STATION_INCHARGE) {
@@ -81,13 +92,15 @@ public class LeaveServiceImpl implements LeaveService {
             }
         }
 
-        // Station Incharge → Commissioner
+        // Station Incharge leave → Commissioner approval
         else if (requester.getUrole() == UserRole.STATION_INCHARGE) {
 
             if (approver.getUrole() != UserRole.COMMISSIONER) {
-                throw new RuntimeException("Only Commissioner can approve incharge leave");
+                throw new RuntimeException("Only Commissioner can approve Station Incharge leave");
             }
-        } else {
+        }
+
+        else {
             throw new RuntimeException("Invalid leave approval flow");
         }
 
@@ -100,6 +113,8 @@ public class LeaveServiceImpl implements LeaveService {
 
     /**
      * REJECT LEAVE
+     * - Station Incharge → rejects Police Officer
+     * - Commissioner → rejects Station Incharge
      */
     @Override
     public String rejectLeave(Long leaveId, Long approverId) {
@@ -119,7 +134,7 @@ public class LeaveServiceImpl implements LeaveService {
 
         if (requester.getUrole() == UserRole.STATION_INCHARGE &&
             approver.getUrole() != UserRole.COMMISSIONER) {
-            throw new RuntimeException("Only Commissioner can reject incharge leave");
+            throw new RuntimeException("Only Commissioner can reject Station Incharge leave");
         }
 
         leave.setLStatus(RequestStatus.REJECTED);
@@ -128,10 +143,8 @@ public class LeaveServiceImpl implements LeaveService {
 
         return "Leave rejected successfully";
     }
-
-    /**
-     * Pending Police Leaves for Station Incharge
-     */
+ 
+    
     @Override
     public List<LeaveRequest> getPendingPoliceLeaves(Long inchargeId) {
 
@@ -148,30 +161,31 @@ public class LeaveServiceImpl implements LeaveService {
                 incharge.getStation().getSid()
         );
     }
-
-    /**
-     * Pending Leaves for Commissioner
-     */
+    
     public List<LeaveResponseDTO> getPendingLeavesForCommissioner(Long commissionerId) {
 
         User commissioner = userRepository.findByUid(commissionerId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if (commissioner.getUrole() != UserRole.COMMISSIONER) {
             throw new RuntimeException("Unauthorized");
         }
 
         return leaveRepository.findAllPendingLeaves()
-                .stream()
-                .map(l -> new LeaveResponseDTO(
-                        l.getLid(),
-                        l.getUid().getUname(),
-                        l.getUid().getUrole().name(),
-                        l.getLStartDate(),
-                        l.getLEndDate(),
-                        l.getLReason(),
-                        l.getLStatus().name()
-                ))
-                .toList();
+            .stream()
+            .map(l -> new LeaveResponseDTO(
+                l.getLid(),
+                l.getUid().getUname(),
+                l.getUid().getUrole().name(),
+                l.getLStatDate(),
+                l.getLEndDate(),
+                l.getLReason(),
+                l.getLStatus().name()
+            ))
+            .toList();
     }
+
+
+
+    
 }

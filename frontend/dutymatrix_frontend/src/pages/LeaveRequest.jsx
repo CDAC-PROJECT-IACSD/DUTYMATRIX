@@ -6,10 +6,10 @@ import "../styles/dashboard.css";
 export default function LeaveRequest() {
   const { user, token } = useAuth();
 
-  const [formData, setFormData] = useState({
+  const [form, setForm] = useState({
     lStartDate: "",
     lEndDate: "",
-    lReason: "",
+    lReason: ""
   });
 
   const [loading, setLoading] = useState(false);
@@ -47,17 +47,20 @@ export default function LeaveRequest() {
         }
       );
 
-      setSuccess("Leave request submitted successfully");
-
-      setFormData({
+      setMessage(res.data);
+      setForm({
         lStartDate: "",
         lEndDate: "",
-        lReason: "",
+        lReason: ""
       });
     } catch (err) {
       console.error(err);
+
+      // ✅ SAFE ERROR RENDERING
       setError(
-        err.response?.data || "Failed to submit leave request"
+        err.response?.data?.message ||
+        err.response?.data ||
+        "Failed to submit leave request"
       );
     } finally {
       setLoading(false);
@@ -71,75 +74,55 @@ export default function LeaveRequest() {
         Welcome {user?.userName}
       </h5>
 
-      <div className="row justify-content-center mt-4">
-        <div className="col-md-6">
-          <div className="card">
-            <div className="card-header">
-              Apply for Leave
-            </div>
+      <form onSubmit={handleSubmit} className="card p-4 shadow-sm">
 
-            <div className="card-body">
-              {success && (
-                <div className="alert alert-success">
-                  {success}
-                </div>
-              )}
-
-              {error && (
-                <div className="alert alert-danger">
-                  {error}
-                </div>
-              )}
-
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label className="form-label">Start Date</label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    name="lStartDate"
-                    value={formData.lStartDate}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">End Date</label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    name="lEndDate"
-                    value={formData.lEndDate}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Reason</label>
-                  <textarea
-                    className="form-control"
-                    rows="3"
-                    name="lReason"
-                    value={formData.lReason}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="btn btn-primary w-100"
-                  disabled={loading}
-                >
-                  {loading ? "Submitting..." : "Apply Leave"}
-                </button>
-              </form>
-            </div>
-          </div>
+        <div className="mb-3">
+          <label className="form-label">Start Date</label>
+          <input
+            type="date"
+            name="lStartDate"
+            className="form-control"
+            value={form.lStartDate}
+            onChange={handleChange}
+            required
+          />
         </div>
-      </div>
+
+        <div className="mb-3">
+          <label className="form-label">End Date</label>
+          <input
+            type="date"
+            name="lEndDate"
+            className="form-control"
+            value={form.lEndDate}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Reason</label>
+          <textarea
+            name="lReason"
+            className="form-control"
+            rows="3"
+            value={form.lReason}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <button type="submit" className="btn btn-primary">
+          Submit Leave Request
+        </button>
+
+        {message && (
+          <p className="text-success mt-3">{message}</p>
+        )}
+        {error && (
+          <p className="text-danger mt-3">{error}</p>
+        )}
+      </form>
     </div>
   );
 }

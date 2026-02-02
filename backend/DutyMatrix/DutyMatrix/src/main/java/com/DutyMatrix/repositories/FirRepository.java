@@ -8,6 +8,7 @@ import com.DutyMatrix.pojo.FIR;
 
 public interface FirRepository extends JpaRepository<FIR, Long> {
 
-	List<FIR> findByStationSid(Long stationId);
+	List<FIR> findByStation_Sid(Long sid);
+
 
 }

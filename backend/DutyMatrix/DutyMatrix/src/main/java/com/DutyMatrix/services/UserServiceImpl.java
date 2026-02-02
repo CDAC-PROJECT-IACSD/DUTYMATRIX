@@ -47,17 +47,19 @@ public class UserServiceImpl implements UserService {
 	
 	
 	@Override
-	public List<StationUserDTO> getOfficersByStation(Long stationId) {
-	    List<UserRole> roles = List.of(UserRole.POLICE_OFFICER);
-	    return userRepo.findByStation_SidAndUroleIn(stationId, roles)
-	            .stream()
-	            .map(user -> new StationUserDTO(
-	                    user.getUid(),
-	                    user.getUname(),
-	                    user.getUrole(),
-	                    user.getUrank()
-	            ))
-	            .toList();
-	}
+    public List<StationUserDTO> getOfficersByStation(Long stationId) {
+
+        List<UserRole> roles = List.of(UserRole.POLICE_OFFICER);
+
+        return userRepo.findByStation_SidAndUroleIn(stationId, roles)
+                .stream()
+                .map(user -> new StationUserDTO(
+                        user.getUid(),
+                        user.getUname(),
+                        user.getUrole(),
+                        user.getUrank()
+                ))
+                .toList();
+    }
 
 }

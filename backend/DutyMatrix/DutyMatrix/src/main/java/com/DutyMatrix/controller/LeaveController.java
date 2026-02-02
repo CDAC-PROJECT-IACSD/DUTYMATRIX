@@ -29,8 +29,8 @@ public class LeaveController {
 
     private final LeaveService leaveService;
 
-    // Police applies leave
-    @PreAuthorize("hasRole('POLICE_OFFICER')")
+    // APPLY LEAVE (Any authenticated user)
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/apply")
     public ResponseEntity<String> applyLeave(
             @RequestBody LeaveRequestDTO dto,
@@ -41,7 +41,7 @@ public class LeaveController {
         );
     }
 
-    // Approve leave
+    // APPROVE LEAVE
     @PreAuthorize("hasAnyRole('STATION_INCHARGE','COMMISSIONER')")
     @PutMapping("/approve/{leaveId}")
     public ResponseEntity<String> approveLeave(
@@ -53,7 +53,7 @@ public class LeaveController {
         );
     }
 
-    // Reject leave
+    // REJECT LEAVE
     @PreAuthorize("hasAnyRole('STATION_INCHARGE','COMMISSIONER')")
     @PutMapping("/reject/{leaveId}")
     public ResponseEntity<String> rejectLeave(
@@ -64,15 +64,16 @@ public class LeaveController {
                 leaveService.rejectLeave(leaveId, user.getUserId())
         );
     }
-
-    // Commissioner pending leaves
-    @PreAuthorize("hasRole('COMMISSIONER')")
+    
     @GetMapping("/pending")
+    @PreAuthorize("hasRole('COMMISSIONER')")
     public ResponseEntity<List<LeaveResponseDTO>> getPendingLeaves(
             @AuthenticationPrincipal JwtUserDTO user) {
 
         return ResponseEntity.ok(
-                leaveService.getPendingLeavesForCommissioner(user.getUserId())
+            leaveService.getPendingLeavesForCommissioner(user.getUserId())
         );
     }
+
+
 }
