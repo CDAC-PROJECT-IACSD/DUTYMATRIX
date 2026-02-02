@@ -17,4 +17,7 @@ public interface FirFileService {
 	// List all the FIRs of a particular station
 	List<FirResponseDTO> getAllFirsByStation(Long stationId);
 	
+	//For commissioner dashboard to see all the firs
+	List<FirResponseDTO> getAllFirs();
+
 }

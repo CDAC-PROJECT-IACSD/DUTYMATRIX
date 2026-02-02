@@ -23,69 +23,91 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class FirFileServiceImpl implements FirFileService {
 
-	private final FirRepository firRepo;
-	private final UserRepository userRepo;
+    private final FirRepository firRepo;
+    private final UserRepository userRepo;
 
-	@Override
-	public FIR fileFir(FirFileDTO firdto) {
+    @Override
+    public FIR fileFir(FirFileDTO dto) {
 
-		User user = userRepo.findById(firdto.getFilledByUserId())
-				.orElseThrow(() -> new ResourceNotFoundException("No user found"));
+        User officer = userRepo.findById(dto.getFilledByUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-		if (user.getUrole() != UserRole.POLICE_OFFICER) {
-			throw new RuntimeException("Only police officers can file FIR");
-		}
+        if (officer.getUrole() != UserRole.POLICE_OFFICER) {
+            throw new RuntimeException("Only Police Officers can file FIR");
+        }
 
-		FIR fir = new FIR();
-		fir.setComplainantName(firdto.getComplainantName());
-		fir.setComplainantPhone(firdto.getComplainantPhone());
-		fir.setCrimeType(firdto.getCrimeType());
-		fir.setCrimeDescription(firdto.getCrimeDescription());
-		fir.setCrimeLocation(firdto.getCrimeLocation());
-		fir.setCrimeDateTime(firdto.getCrimeDateTime());
-		fir.setSectionsApplied(firdto.getSectionsApplied());
-		fir.setSeverity(firdto.getSeverity());
-		fir.setAccussedKnown(firdto.getAccussedKnown());
+        FIR fir = new FIR();
+        fir.setComplainantName(dto.getComplainantName());
+        fir.setComplainantPhone(dto.getComplainantPhone());
+        fir.setCrimeType(dto.getCrimeType());
+        fir.setCrimeDescription(dto.getCrimeDescription());
+        fir.setCrimeLocation(dto.getCrimeLocation());
+        fir.setCrimeDateTime(dto.getCrimeDateTime());
+        fir.setSectionsApplied(dto.getSectionsApplied());
+        fir.setSeverity(dto.getSeverity());
+        fir.setAccussedKnown(dto.getAccussedKnown());
+        fir.setAccusedName(dto.getAccussedKnown() ? dto.getAccusedName() : null);
 
-		if (Boolean.TRUE.equals(firdto.getAccussedKnown())) {
-			fir.setAccusedName(firdto.getAccusedName());
-		} else {
-			fir.setAccusedName(null);
-		}
+        fir.setFiledBy(officer);
+        fir.setStation(officer.getStation());
+        fir.setFirDateTime(LocalDateTime.now());
+        fir.setStatus(FIRStatus.FILED);
 
-		fir.setFiledBy(user);
-		fir.setStation(user.getStation());
-		fir.setFirDateTime(LocalDateTime.now());
-		fir.setStatus(FIRStatus.FILED);
+        return firRepo.save(fir);
+    }
 
-		return firRepo.save(fir);
-	}
+    @Override
+    public FIR assignInvestigatingOfficer(Long firId, Long officerId) {
 
-	@Override
-	public FIR assignInvestigatingOfficer(Long firId, Long officerId) {
-		FIR fir = firRepo.findById(firId).orElseThrow(() -> new ResourceNotFoundException("No FIR Exists..."));
+        FIR fir = firRepo.findById(firId)
+                .orElseThrow(() -> new ResourceNotFoundException("FIR not found"));
 
-		User user = userRepo.findById(officerId).orElseThrow(() -> new ResourceNotFoundException("No user found..."));
+        User officer = userRepo.findById(officerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Officer not found"));
 
-		fir.setInvestigatingOfficer(user);
-		fir.setStatus(FIRStatus.UNDER_INVESTIGATION);
+        fir.setInvestigatingOfficer(officer);
+        fir.setStatus(FIRStatus.UNDER_INVESTIGATION);
 
-		return fir;
-	}
+        return fir;
+    }
 
-	@Override
-	public List<FirResponseDTO> getAllFirsByStation(Long stationId) {
+    @Override
+    public List<FirResponseDTO> getAllFirsByStation(Long stationId) {
 
-		return firRepo.findByStation_Sid(stationId).stream().map(fir -> {
-			FirResponseDTO dto = new FirResponseDTO();
-			dto.setFirId(fir.getFirId());
-			dto.setFiledBy(fir.getFiledBy().getUname());
-			dto.setStationName(fir.getStation().getSname());
-			dto.setInvestigatingOfficer(
-					fir.getInvestigatingOfficer() != null ? fir.getInvestigatingOfficer().getUname() : "Not Assigned");
-			dto.setStatus(fir.getStatus().name());
-			return dto;
-		}).toList();
-	}
+        return firRepo.findByStation_Sid(stationId).stream().map(fir -> {
+            FirResponseDTO dto = new FirResponseDTO();
+            dto.setFirId(fir.getFirId());
+            dto.setFiledBy(fir.getFiledBy().getUname());
+            dto.setStationName(fir.getStation().getSname());
+            dto.setInvestigatingOfficer(
+                fir.getInvestigatingOfficer() != null
+                    ? fir.getInvestigatingOfficer().getUname()
+                    : "Not Assigned"
+            );
+            dto.setStatus(fir.getStatus().name());
+            dto.setCrimeDescription(fir.getCrimeDescription());
+            dto.setCrimeDateTime(fir.getCrimeDateTime());
+            return dto;
+        }).toList();
+    }
 
+    @Override
+    public List<FirResponseDTO> getAllFirs() {
+
+        return firRepo.findAll().stream().map(fir -> {
+            FirResponseDTO dto = new FirResponseDTO();
+            dto.setFirId(fir.getFirId());
+            dto.setFiledBy(fir.getFiledBy().getUname());
+            dto.setStationName(fir.getStation().getSname());
+            dto.setInvestigatingOfficer(
+                fir.getInvestigatingOfficer() != null
+                    ? fir.getInvestigatingOfficer().getUname()
+                    : "Not Assigned"
+            );
+            dto.setStatus(fir.getStatus().name());
+            dto.setCrimeDescription(fir.getCrimeDescription());
+            dto.setCrimeDateTime(fir.getCrimeDateTime());
+            return dto;
+        }).toList();
+    }
 }

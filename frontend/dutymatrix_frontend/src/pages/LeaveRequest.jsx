@@ -5,10 +5,11 @@ import { useAuth } from "../auth/AuthContext";
 export default function LeaveRequest() {
   const { token } = useAuth();
 
+  // ✅ MATCH DTO FIELD NAMES
   const [form, setForm] = useState({
-    lStartDate: "",
-    lEndDate: "",
-    lReason: ""
+    startDate: "",
+    endDate: "",
+    reason: ""
   });
 
   const [message, setMessage] = useState("");
@@ -37,14 +38,18 @@ export default function LeaveRequest() {
 
       setMessage(res.data);
       setForm({
-        lStartDate: "",
-        lEndDate: "",
-        lReason: ""
+        startDate: "",
+        endDate: "",
+        reason: ""
       });
     } catch (err) {
       console.error(err);
+
+      // ✅ SAFE ERROR RENDERING
       setError(
-        err.response?.data || "Failed to submit leave request"
+        err.response?.data?.message ||
+        err.response?.data ||
+        "Failed to submit leave request"
       );
     }
   };
@@ -59,9 +64,9 @@ export default function LeaveRequest() {
           <label className="form-label">Start Date</label>
           <input
             type="date"
-            name="lStartDate"
+            name="startDate"
             className="form-control"
-            value={form.lStartDate}
+            value={form.startDate}
             onChange={handleChange}
             required
           />
@@ -71,9 +76,9 @@ export default function LeaveRequest() {
           <label className="form-label">End Date</label>
           <input
             type="date"
-            name="lEndDate"
+            name="endDate"
             className="form-control"
-            value={form.lEndDate}
+            value={form.endDate}
             onChange={handleChange}
             required
           />
@@ -82,10 +87,10 @@ export default function LeaveRequest() {
         <div className="mb-3">
           <label className="form-label">Reason</label>
           <textarea
-            name="lReason"
+            name="reason"
             className="form-control"
             rows="3"
-            value={form.lReason}
+            value={form.reason}
             onChange={handleChange}
             required
           />
@@ -95,12 +100,8 @@ export default function LeaveRequest() {
           Submit Leave Request
         </button>
 
-        {message && (
-          <p className="text-success mt-3">{message}</p>
-        )}
-        {error && (
-          <p className="text-danger mt-3">{error}</p>
-        )}
+        {message && <p className="text-success mt-3">{message}</p>}
+        {error && <p className="text-danger mt-3">{error}</p>}
       </form>
     </div>
   );

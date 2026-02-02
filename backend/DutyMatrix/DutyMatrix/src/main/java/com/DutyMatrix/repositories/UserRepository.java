@@ -11,13 +11,11 @@ import com.DutyMatrix.pojo.UserRole;
 public interface UserRepository extends JpaRepository<User, Long> {
 
 	boolean existsByUemail(String uemail);
-	
+
 	Optional<User> findByUemail(String uemail);
 
 	Optional<User> findByUid(Long uid);
 
 	List<User> findByStationSid(Long stationId);
-	
-	 List<User> findByStation_SidAndUroleIn(Long sid, List<UserRole> roles);
 
-}
+	List<User> findByStation_SidAndUroleIn(Long sid, List<UserRole> roles);}

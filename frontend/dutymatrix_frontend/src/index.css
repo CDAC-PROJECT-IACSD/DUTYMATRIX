@@ -9,5 +9,5 @@ body,
 #root {
   width: 100%;
   height: 100%;
-  background-color: #fdfdfd;
+background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
 }

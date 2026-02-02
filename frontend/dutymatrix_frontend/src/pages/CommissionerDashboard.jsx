@@ -6,7 +6,9 @@ import {
   getLeaveRequestsByStation,
   getAllSwapsForCommissioner,
   rejectLeave,
+  getAllFirs,
 } from "../services/api";
+import Navbar from "../components/Navbar";
 import { useAuth } from "../auth/AuthContext";
 import "../styles/dashboard.css";
 
@@ -31,6 +33,10 @@ export default function CommissionerDashboard() {
   const [leaveRequests, setLeaveRequests] = useState([]);
   const [showLeaveRequests, setShowLeaveRequests] = useState(false);
 
+  //FIRs
+  const [firs, setFirs] = useState([]);
+  const [showFirs, setShowFirs] = useState(false);
+
   useEffect(() => {
     if (showTable) {
       getAllStations().then(setStations).catch(console.error);
@@ -49,6 +55,12 @@ export default function CommissionerDashboard() {
     }
   }, [showLeaveRequests]);
 
+  useEffect(() => {
+    if (showFirs) {
+      getAllFirs().then(setFirs).catch(console.error);
+    }
+  }, [showFirs]);
+
   const loadDuties = () => {
     if (!selectedDate) return;
     getDutiesByDate(selectedDate).then(setDuties).catch(console.error);
@@ -60,6 +72,7 @@ export default function CommissionerDashboard() {
     setShowDutyOversight(false);
     setShowSwapRequests(false);
     setShowLeaveRequests(false);
+    setShowFirs(false);
   };
 
   const refreshLeaves = () => {
@@ -141,6 +154,22 @@ export default function CommissionerDashboard() {
               className="btn-icon"
             />
             {showLeaveRequests ? "Hide Leave Requests" : "View Leave Requests"}
+          </button>
+
+          {/* ======================= All FIRs Show Button ================= */}
+          <button
+            className="dashboard-btn btn-info"
+            onClick={() => {
+                resetViews();
+                setShowFirs(true);
+            }}
+          >
+             <img
+              src="/src/assets/checkok.gif"
+              alt="Icon"
+              className="btn-icon"
+            />
+            {showFirs ? "Hide FIRs" : "View All FIRs"}
           </button>
         </div>
 
@@ -433,6 +462,56 @@ export default function CommissionerDashboard() {
                       ))
                     )}
                   </tbody>
+                </table>
+              </div>
+            </>
+          )}
+
+          {/* All FIRs Section */}
+          {showFirs && (
+            <>
+              <hr className="my-5" />
+              <h4 className="fw-bold">All FIRs Registry</h4>
+
+              <div className="card mt-3">
+                <table className="table table-bordered table-striped mb-0">
+                  <thead className="table-dark">
+                    <tr>
+    <th>FIR ID</th>
+    <th>Status</th>
+    <th>Filed By</th>
+    <th>Investigating Officer</th>
+    <th>Description</th>
+    <th>Date</th>
+  </tr>
+                  </thead>
+                  <tbody>
+  {firs.map(fir => (
+    <tr key={fir.firId}>
+      <td>#{fir.firId}</td>
+
+      <td>
+        <span className={`status-badge ${fir.status.toLowerCase()}`}>
+          {fir.status}
+        </span>
+      </td>
+
+      <td>{fir.filedBy}</td>
+
+      <td>{fir.investigatingOfficer}</td>
+
+      <td>{fir.crimeDescription}</td>
+
+      <td>
+  {fir.crimeDateTime
+    ? new Date(fir.crimeDateTime).toLocaleString()
+    : "-"}
+</td>
+
+    </tr>
+  ))}
+</tbody>
+
                 </table>
               </div>
             </>

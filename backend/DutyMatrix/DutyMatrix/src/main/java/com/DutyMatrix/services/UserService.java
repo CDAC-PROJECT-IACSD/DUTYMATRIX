@@ -8,4 +8,5 @@ public interface UserService {
 	String registerUser(UserRegisterDTO userRegisterDTO);
 	
 	List<StationUserDTO> getOfficersByStation(Long stationId);
+	
 }

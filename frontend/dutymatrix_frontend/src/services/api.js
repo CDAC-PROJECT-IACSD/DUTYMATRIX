@@ -74,4 +74,29 @@ export const rejectLeave = async (leaveId) => {
   await API.put(`/leave/reject/${leaveId}`);
 };
 
+export const getAllFirs = async () => {
+    const res = await API.get("/fir/all");
+    return res.data;
+};
+
+// ================= STATION INCHARGE =================
+
+export const getStationFirs = async () => {
+  const res = await API.get("/fir/station-incharge");
+  return res.data;
+};
+
+export const getStationOfficers = async () => {
+  const res = await API.get("/users/station-incharge/officers");
+  return res.data;
+};
+
+export const assignInvestigatingOfficer = async (firId, officerId) => {
+  await API.put(`/fir/${firId}/assign`, null, {
+    params: { officerId },
+  });
+};
+
+
+
 export default API;

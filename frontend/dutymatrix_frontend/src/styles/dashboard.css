@@ -278,3 +278,48 @@ hr {
     grid-template-columns: 1fr;
   }
 }
+
+/* =========================================
+   NEW STYLES FOR FIR & BADGES
+   ========================================= */
+
+:root {
+  /* Add Info Gradient (Blue/Cyan/Purple mix for premium feel) */
+  --info-gradient: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+}
+
+.dashboard-btn.btn-info {
+  background: var(--info-gradient);
+  color: white;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: inline-block;
+  min-width: 80px;
+  text-align: center;
+}
+
+.status-badge.pending, .status-badge.filed {
+  background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+  color: #2d3748;
+}
+
+.status-badge.approved, .status-badge.assigned, .status-badge.under_investigation {
+  background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+  color: #1a202c;
+}
+
+.status-badge.rejected, .status-badge.closed {
+  background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+  color: #fff;
+}
+
