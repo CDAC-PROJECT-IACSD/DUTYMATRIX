@@ -41,12 +41,7 @@ export default function Navbar() {
           {/* Officer Links */}
           {isOfficer && (
             <>
-              <Link to="/leave" className="btn btn-outline-light btn-sm">
-                Leave Request
-              </Link>
-              <Link to="/shift-swap" className="btn btn-outline-light btn-sm">
-                Shift Swap
-              </Link>
+             {/* extra features in future add in nav bar */}
             </>
           )}
 

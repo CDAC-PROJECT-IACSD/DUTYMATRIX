@@ -3,6 +3,7 @@ import { useAuth } from "../auth/AuthContext";
 import axios from "axios";
 import CreateShift from "./CreateShift";
 import SwapApprovalManual from "./SwapApproval";
+import LeaveApproval from "./LeaveApproval";
 import "../styles/dashboard.css";
 
 export default function StationInchargeDashboard() {
@@ -12,6 +13,7 @@ export default function StationInchargeDashboard() {
   const [showCreateShift, setShowCreateShift] = useState(false);
   const [showSwapApprovals, setShowSwapApprovals] = useState(false);
   const [showFIRs, setShowFIRs] = useState(false);
+  const [showLeaveApprovals, setShowLeaveApprovals] = useState(false);
 
   // FIR Dashboard State
   const [firs, setFirs] = useState([]);
@@ -33,32 +35,32 @@ export default function StationInchargeDashboard() {
     setShowCreateShift(false);
     setShowSwapApprovals(false);
     setShowFIRs(false);
+    setShowLeaveApprovals(false);
   };
 
   const fetchDashboardData = async () => {
-  try {
-    setLoading(true);
-    setError(null);
+    try {
+      setLoading(true);
+      setError(null);
 
-    const config = {
-      headers: { Authorization: `Bearer ${token}` },
-    };
+      const config = {
+        headers: { Authorization: `Bearer ${token}` },
+      };
 
-    const [firsRes, officersRes] = await Promise.all([
-      axios.get("http://localhost:9090/fir/station-incharge", config),
-      axios.get("http://localhost:9090/users/station-incharge/officers", config),
-    ]);
+      const [firsRes, officersRes] = await Promise.all([
+        axios.get("http://localhost:9090/fir/station-incharge", config),
+        axios.get("http://localhost:9090/users/station-incharge/officers", config),
+      ]);
 
-    setFirs(firsRes.data);
-    setOfficers(officersRes.data);
-  } catch (err) {
-    console.error(err);
-    setError("Failed to load station dashboard data");
-  } finally {
-    setLoading(false);
-  }
-};
-
+      setFirs(firsRes.data);
+      setOfficers(officersRes.data);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load station dashboard data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAssign = async (firId) => {
     if (!selectedOfficer) return;
@@ -98,8 +100,7 @@ export default function StationInchargeDashboard() {
             setShowCreateShift(true);
           }}
         >
-          <img src="/src/assets/checkok.gif" alt="Icon" className="btn-icon" />
-          {showCreateShift ? "Hide Create Shift" : "Create Shift"}
+          Create Shift
         </button>
 
         <button
@@ -109,8 +110,17 @@ export default function StationInchargeDashboard() {
             setShowSwapApprovals(true);
           }}
         >
-          <img src="/src/assets/checkok.gif" alt="Icon" className="btn-icon" />
-          {showSwapApprovals ? "Hide Swap Approvals" : "Swap Approvals"}
+          Swap Approvals
+        </button>
+
+        <button
+          className="dashboard-btn btn-info"
+          onClick={() => {
+            resetViews();
+            setShowLeaveApprovals(true);
+          }}
+        >
+          Leave Approvals
         </button>
 
         <button
@@ -120,20 +130,21 @@ export default function StationInchargeDashboard() {
             setShowFIRs(true);
           }}
         >
-          <img src="/src/assets/checkok.gif" alt="Icon" className="btn-icon" />
-          {showFIRs ? "Hide FIR Registry" : "View Station FIRs"}
+          View Station FIRs
         </button>
       </div>
 
-      {/* ==================Content Area==================== */}
+      {/* ================== CONTENT AREA ================== */}
       <div className="content-area mt-4">
         {showCreateShift && (
-          <div className="card p-3 mt-3 mb-4">
+          <div className="card p-3 mb-4">
             <CreateShift />
           </div>
         )}
 
         {showSwapApprovals && <SwapApprovalManual />}
+
+        {showLeaveApprovals && <LeaveApproval />}
 
         {showFIRs && (
           <>
@@ -237,7 +248,9 @@ export default function StationInchargeDashboard() {
                               ) : (
                                 <button
                                   className="btn btn-sm btn-primary"
-                                  onClick={() => setAssigningId(fir.firId)}
+                                  onClick={() =>
+                                    setAssigningId(fir.firId)
+                                  }
                                 >
                                   Assign Officer
                                 </button>
