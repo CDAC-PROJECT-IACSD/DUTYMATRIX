@@ -7,7 +7,6 @@ import {
   getAllSwapsForCommissioner,
   rejectLeave,
 } from "../services/api";
-import Navbar from "../components/Navbar";
 import { useAuth } from "../auth/AuthContext";
 import "../styles/dashboard.css";
 
@@ -74,7 +73,6 @@ export default function CommissionerDashboard() {
 
   return (
     <>
-      <Navbar />
       <div className="dashboard-container">
         <h3 className="dashboard-title">Commissioner Dashboard</h3>
         <h5 className="welcome-message">Welcome {user.userName}</h5>

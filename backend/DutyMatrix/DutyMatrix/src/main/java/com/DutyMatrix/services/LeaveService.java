@@ -3,7 +3,6 @@ package com.DutyMatrix.services;
 import java.util.List;
 
 import com.DutyMatrix.dto.LeaveRequestDTO;
-import com.DutyMatrix.dto.LeaveResponseDTO;
 import com.DutyMatrix.pojo.LeaveRequest;
 
 public interface LeaveService {
@@ -18,10 +17,6 @@ public interface LeaveService {
 	List<LeaveRequest> getPendingPoliceLeaves(Long inchargeId);
 
 	// Commissioner dashboard
-	List<LeaveResponseDTO> getPendingLeavesForCommissioner(Long commissionerId);
-
-	
-	
-	
+	List<LeaveRequest> getPendingLeavesForCommissioner(Long commissionerId);
 
 }

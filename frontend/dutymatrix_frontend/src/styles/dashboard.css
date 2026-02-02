@@ -15,8 +15,8 @@
 }
 
 body {
-  background-color: #f0f2f5; /* Fallback */
-  background: linear-gradient(to right, #141e30, #243b55); /* Dark premium background */
+  background-color: #101010; /* Fallback */
+  background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%); /* Premium Black Theme */
   font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   color: var(--text-dark);
 }

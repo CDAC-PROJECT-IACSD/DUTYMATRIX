@@ -31,12 +31,4 @@ public interface LeaveRepository extends JpaRepository<LeaveRequest, Long> {
 			""")
 	List<LeaveRequest> findPendingLeavesByStation(@Param("status") RequestStatus status,
 			@Param("stationId") Long stationId);
-	
-	@Query("""
-		    SELECT l
-		    FROM LeaveRequest l
-		    
-		""")
-		List<LeaveRequest> findAllPendingLeaves();
 }
-

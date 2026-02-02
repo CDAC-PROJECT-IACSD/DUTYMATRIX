@@ -2,7 +2,16 @@ package com.DutyMatrix.pojo;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,7 +31,7 @@ public class LeaveRequest {
     private Long lid;
 
     @Column(name = "leave_request_start_date", nullable = false)
-    private LocalDate lStartDate;
+    private LocalDate lStatDate;
 
     @Column(name = "leave_request_end_date", nullable = false)
     private LocalDate lEndDate;

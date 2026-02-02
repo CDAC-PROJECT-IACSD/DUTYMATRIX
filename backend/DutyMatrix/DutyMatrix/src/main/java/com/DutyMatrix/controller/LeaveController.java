@@ -1,7 +1,5 @@
 package com.DutyMatrix.controller;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.DutyMatrix.dto.JwtUserDTO;
 import com.DutyMatrix.dto.LeaveRequestDTO;
-import com.DutyMatrix.dto.LeaveResponseDTO;
 import com.DutyMatrix.services.LeaveService;
 
 import lombok.AllArgsConstructor;
@@ -29,8 +26,8 @@ public class LeaveController {
 
     private final LeaveService leaveService;
 
-    // Police applies leave
-    @PreAuthorize("hasRole('POLICE_OFFICER')")
+    // APPLY LEAVE (Any authenticated user)
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/apply")
     public ResponseEntity<String> applyLeave(
             @RequestBody LeaveRequestDTO dto,
@@ -41,7 +38,7 @@ public class LeaveController {
         );
     }
 
-    // Approve leave
+    // APPROVE LEAVE
     @PreAuthorize("hasAnyRole('STATION_INCHARGE','COMMISSIONER')")
     @PutMapping("/approve/{leaveId}")
     public ResponseEntity<String> approveLeave(
@@ -53,7 +50,7 @@ public class LeaveController {
         );
     }
 
-    // Reject leave
+    // REJECT LEAVE
     @PreAuthorize("hasAnyRole('STATION_INCHARGE','COMMISSIONER')")
     @PutMapping("/reject/{leaveId}")
     public ResponseEntity<String> rejectLeave(
@@ -64,15 +61,15 @@ public class LeaveController {
                 leaveService.rejectLeave(leaveId, user.getUserId())
         );
     }
-
-    // Commissioner pending leaves
+    
     @PreAuthorize("hasRole('COMMISSIONER')")
     @GetMapping("/pending")
-    public ResponseEntity<List<LeaveResponseDTO>> getPendingLeaves(
+    public ResponseEntity<?> getPendingLeavesForCommissioner(
             @AuthenticationPrincipal JwtUserDTO user) {
 
         return ResponseEntity.ok(
                 leaveService.getPendingLeavesForCommissioner(user.getUserId())
         );
     }
+
 }

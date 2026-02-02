@@ -1,6 +1,8 @@
 package com.DutyMatrix.dto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -35,8 +37,9 @@ public class FirFileDTO {
     private String crimeLocation;
 
     @NotNull(message = "Crime date and time is required")
-    @PastOrPresent(message = "Crime date cannot be in the future")
-    private Date crimeDateTime;
+//    @PastOrPresent(message = "Crime date cannot be in the future")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime crimeDateTime;
 
     // Legal and investigation information
     @NotBlank(message = "IPC sections are required")
@@ -45,8 +48,8 @@ public class FirFileDTO {
     @NotNull(message = "Please specify whether accused is known or not")
     private Boolean accussedKnown;
 
-    @Size(min = 3, max = 50, message = "Accused name must be 3–50 characters")
     private String accusedName;
+
 
     @NotBlank(message = "Severity is required")
     private String severity;
