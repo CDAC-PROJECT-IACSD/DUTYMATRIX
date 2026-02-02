@@ -18,4 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	List<User> findByStationSid(Long stationId);
 
-	List<User> findByStation_SidAndUroleIn(Long sid, List<UserRole> roles);}
+	List<User> findByStation_SidAndUroleIn(Long sid, List<UserRole> roles);
+
+	List<User> findByStation_SidAndUrole(Long sid, UserRole stationIncharge);
+
+	Optional<User> findByUrole(UserRole commissioner);}

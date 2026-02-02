@@ -13,6 +13,9 @@ import SwapApproval from "./pages/SwapApproval";
 
 import Navbar from "./components/Navbar";
 
+import Notifications from "./components/Notifications";
+
+
 function App() {
   return (
     <>
@@ -38,6 +41,10 @@ function App() {
         {/* Station Incharge */}
         <Route path="/shifts" element={<CreateShift />} />
         <Route path="/swap-approval" element={<SwapApproval />} />
+
+        {/* Notification */}
+        <Route path="/notifications" element={<Notifications />} />
+
       </Routes>
     </>
   );

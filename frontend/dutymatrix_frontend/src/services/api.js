@@ -98,5 +98,15 @@ export const assignInvestigatingOfficer = async (firId, officerId) => {
 };
 
 
+// ================= NOTIFICATION APIs =================
+
+// Get notifications of logged-in user
+export const getNotifications = async (userId) => {
+  const res = await API.get(
+    `http://localhost:4000/api/notifications/user/${userId}`
+  );
+  return res.data;
+};
+
 
 export default API;
