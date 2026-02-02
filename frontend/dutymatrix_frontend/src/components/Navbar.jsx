@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+import { Bell } from "lucide-react";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -37,18 +38,13 @@ export default function Navbar() {
 
       <div className="collapse navbar-collapse" id="navbarContent">
         <div className="ms-auto d-flex flex-column flex-md-row align-items-md-center gap-2 mt-3 mt-md-0">
-
           {/* Officer Links */}
-          {isOfficer && (
-            <>
-             {/* extra features in future add in nav bar */}
-            </>
-          )}
+          {isOfficer && <>{/* extra features in future add in nav bar */}</>}
 
           {/* Station Incharge Links */}
           {isStationIncharge && (
             <>
-            {/* if any thing extra we want to add then we can add it here.... */}
+              {/* if any thing extra we want to add then we can add it here.... */}
             </>
           )}
 
@@ -56,11 +52,14 @@ export default function Navbar() {
           <span className="text-light small text-center">
             {getDashboardName()}
           </span>
-
-          <button
-            className="btn btn-outline-danger btn-sm"
-            onClick={logout}
+          <Link
+            to="/notifications"
+            className="btn btn-dark position-relative me-3"
           >
+            <Bell size={20} />
+          </Link>
+
+          <button className="btn btn-outline-danger btn-sm" onClick={logout}>
             Logout
           </button>
         </div>

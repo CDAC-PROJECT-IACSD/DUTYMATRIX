@@ -24,6 +24,9 @@ public class LeaveServiceImpl implements LeaveService {
 
     private final LeaveRepository leaveRepository;
     private final UserRepository userRepository;
+    
+    //Notification service
+    private final NotificationServices notificationService;
 
     /**
      * APPLY LEAVE
@@ -57,6 +60,56 @@ public class LeaveServiceImpl implements LeaveService {
 
             leave.setLStatus(RequestStatus.PENDING);
             leaveRepository.save(leave);
+            
+            
+            // Notification part -------------------------------------
+            try {
+                // Police Officer → notify Station Incharge
+            	if (user.getUrole() == UserRole.POLICE_OFFICER) {
+
+            	    List<User> incharges = userRepository
+            	        .findByStation_SidAndUrole(
+            	            user.getStation().getSid(),
+            	            UserRole.STATION_INCHARGE
+            	        );
+
+            	    for (User incharge : incharges) {
+            	        try {
+            	            notificationService.sendNotification(
+            	                incharge.getUid(),
+            	                "Police Officer " + user.getUname() + " applied for leave"
+            	            );
+            	        } catch (Exception e) {
+            	            System.err.println("Notification failed: " + e.getMessage());
+            	        }
+            	    }
+            	}
+            	
+                // Station Incharge → notify Commissioner
+                if (user.getUrole() == UserRole.STATION_INCHARGE) {
+                	List<User> incharges = userRepository
+                	        .findByStation_SidAndUrole(
+                	            user.getStation().getSid(),
+                	            UserRole.COMMISSIONER
+                	        );
+
+                	    for (User incharge : incharges) {
+                	        try {
+                	            notificationService.sendNotification(
+                	                incharge.getUid(),
+                	                "Station Incharge " + user.getUname() + " applied for leave"
+                	            );
+                	        } catch (Exception e) {
+                	            System.err.println("Notification failed: " + e.getMessage());
+                	        }
+                	    }
+                    
+                }
+            } catch (Exception e) {
+                // IMPORTANT: notification failure must NOT affect leave flow
+                System.err.println("Notification failed: " + e.getMessage());
+            }
+            
             return "Leave request submitted and pending approval";
         }
 
@@ -107,6 +160,16 @@ public class LeaveServiceImpl implements LeaveService {
         leave.setLStatus(RequestStatus.APPROVED);
         leave.setLapprovedBy(approver);
         leaveRepository.save(leave);
+        
+        // Notification part
+        try {
+            notificationService.sendNotification(
+                requester.getUid(),
+                "Your leave has been approved by " + approver.getUrole()
+            );
+        } catch (Exception e) {
+            System.err.println("Notification failed: " + e.getMessage());
+        }
 
         return "Leave approved successfully";
     }
@@ -141,6 +204,16 @@ public class LeaveServiceImpl implements LeaveService {
         leave.setLapprovedBy(approver);
         leaveRepository.save(leave);
 
+        // Notification Part
+        try {
+            notificationService.sendNotification(
+                requester.getUid(),
+                "Your leave has been rejected by " + approver.getUrole()
+            );
+        } catch (Exception e) {
+            System.err.println("Notification failed: " + e.getMessage());
+        }
+        
         return "Leave rejected successfully";
     }
  
