@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import "../styles/leave_approval.css";
+import { Check, X, ClipboardList } from "lucide-react";
 
 export default function LeaveApproval() {
   const [leaves, setLeaves] = useState([]);
@@ -50,7 +52,8 @@ export default function LeaveApproval() {
         }
       );
 
-      setMessage("Leave approved");
+      setMessage("Leave request approved successfully! ✅");
+      setTimeout(() => setMessage(""), 3000);
       fetchPendingLeaves();
     } catch {
       setError("Failed to approve leave");
@@ -70,7 +73,8 @@ export default function LeaveApproval() {
         }
       );
 
-      setMessage("Leave rejected");
+      setMessage("Leave request rejected. ❌");
+      setTimeout(() => setMessage(""), 3000);
       fetchPendingLeaves();
     } catch {
       setError("Failed to reject leave");
@@ -78,57 +82,81 @@ export default function LeaveApproval() {
   };
 
   return (
-    <div className="container mt-4">
-      <h3 className="mb-3">Pending Leave Requests</h3>
+    <div className="leave-approval-container">
+      <div className="d-flex align-items-center mb-4">
+        <ClipboardList className="text-warning me-3" size={32} />
+        <h3 className="leave-title mb-0">Personnel Leave Registry</h3>
+      </div>
 
-      {message && <div className="alert alert-success">{message}</div>}
-      {error && <div className="alert alert-danger">{error}</div>}
+      {message && <div className="alert alert-success py-2 text-center mb-3">{message}</div>}
+      {error && <div className="alert alert-danger py-2 text-center mb-3">{error}</div>}
 
       {loading ? (
-        <p>Loading...</p>
+        <div className="text-center py-5">
+          <div className="spinner-border text-warning" role="status"></div>
+          <p className="mt-2 text-gray">Retrieving records...</p>
+        </div>
       ) : leaves.length === 0 ? (
-        <p>No pending leave requests</p>
+        <div className="empty-state">
+           <p>All clear! No pending leave requests found for this station.</p>
+        </div>
       ) : (
-        <table className="table table-bordered">
-          <thead className="table-dark">
-            <tr>
-              <th>ID</th>
-              <th>Officer Name</th>
-              <th>Start Date</th>
-              <th>End Date</th>
-              <th>Reason</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {leaves.map((leave) => (
-              <tr key={leave.leaveId}>
-                <td>{leave.leaveId}</td>
-                <td>{leave.userName}</td>
-                <td>{leave.startDate}</td>
-                <td>{leave.endDate}</td>
-                <td>{leave.reason}</td>
-                <td>{leave.status}</td>
-                <td>
-                  <button
-                    className="btn btn-success btn-sm me-2"
-                    onClick={() => approveLeave(leave.leaveId)}
-                  >
-                    Approve
-                  </button>
-                  <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() => rejectLeave(leave.leaveId)}
-                  >
-                    Reject
-                  </button>
-                </td>
+        <div className="table-responsive">
+          <table className="table table-dark table-striped table-hover mb-0">
+            <thead>
+              <tr>
+                <th>Req ID</th>
+                <th>Officer</th>
+                <th>Duration</th>
+                <th>Reason</th>
+                <th>Status</th>
+                <th className="text-center">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {leaves.map((leave) => (
+                <tr key={leave.leaveId} className="align-middle">
+                  <td>#{leave.leaveId}</td>
+                  <td>
+                    <div className="fw-bold text-info">{leave.userName}</div>
+                    <div className="small text-muted text-uppercase" style={{ fontSize: '0.7rem' }}>Personnel Record</div>
+                  </td>
+                  <td>
+                    <div className="small text-light">From: {leave.startDate}</div>
+                    <div className="small text-light">To: {leave.endDate}</div>
+                  </td>
+                  <td style={{ maxWidth: '200px' }} className="text-truncate">
+                    {leave.reason}
+                  </td>
+                  <td>
+                    <span className="badge bg-warning text-dark">
+                      {leave.status}
+                    </span>
+                  </td>
+                  <td>
+                    <div className="d-flex justify-content-center gap-2">
+                      <button
+                        className="btn btn-sm btn-success d-flex align-items-center gap-1"
+                        onClick={() => approveLeave(leave.leaveId)}
+                        title="Approve Leave"
+                      >
+                        <Check size={14} /> Approve
+                      </button>
+                      <button
+                        className="btn btn-sm btn-danger d-flex align-items-center gap-1"
+                        onClick={() => rejectLeave(leave.leaveId)}
+                        title="Reject Leave"
+                      >
+                        <X size={14} /> Reject
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

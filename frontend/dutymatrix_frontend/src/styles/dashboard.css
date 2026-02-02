@@ -18,7 +18,7 @@ body {
   background-color: #101010; /* Fallback */
   background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%); /* Premium Black Theme */
   font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  color: var(--text-dark);
+  color: var(--text-light); /* Changed to light for premium dark theme */
 }
 
 /* =========================================
@@ -188,9 +188,9 @@ body {
 .table tbody td {
   padding: 15px 20px;
   vertical-align: middle;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Changed to light border */
   font-weight: 500;
-  color: #4a5568;
+  color: #cbd5e1; /* Lighter color for readability on dark backgrounds */
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
@@ -262,6 +262,10 @@ body {
   background-color: #f56565 !important;
 }
 
+.text-muted {
+  color: #94a3b8 !important; /* Brighter muted color for dark theme visibility */
+}
+
 hr {
   border-top: 2px solid rgba(255, 255, 255, 0.1);
   opacity: 0.5;
@@ -323,3 +327,91 @@ hr {
   color: #fff;
 }
 
+
+/* =========================================
+   UNIVERSAL INPUT STYLING (Premium Dark)
+   ========================================= */
+
+.swap-input-group {
+  margin-bottom: 0;
+}
+
+.swap-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #94a3b8;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.swap-field-wrapper {
+  display: flex;
+  align-items: center;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 0 16px;
+  transition: all 0.25s ease;
+}
+
+.swap-field-wrapper:focus-within {
+  border-color: #6366f1; /* Indigo focus */
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+  background: #141c2e;
+}
+
+.swap-input {
+  background: transparent;
+  border: none !important;
+  color: #f8fafc !important;
+  width: 100%;
+  padding: 12px 0;
+  font-size: 0.95rem;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Specific styling for select dropdowns */
+select.swap-input {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0 center;
+  padding-right: 25px;
+}
+
+.swap-input option {
+  background-color: #1e293b;
+  color: #f8fafc;
+  padding: 12px;
+}
+
+/* Severity-based colors for FIR dropdown (where supported) */
+option[value="LOW"] { color: #4ade80 !important; background: #1e293b; }
+option[value="MEDIUM"] { color: #facc15 !important; background: #1e293b; }
+option[value="HIGH"] { color: #fb923c !important; background: #1e293b; }
+option[value="CRITICAL"] { color: #f87171 !important; background: #1e293b; }
+
+/* =========================================
+   FORM VALIDATION STATES
+   ========================================= */
+
+/* Use :has() to style the wrapper when the child input is invalid */
+.was-validated .swap-field-wrapper:has(.swap-input:invalid) {
+  border-color: #ef4444 !important; /* Red-500 */
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+  background: rgba(239, 68, 68, 0.02);
+}
+
+.was-validated .swap-input:invalid {
+  color: #fca5a5 !important; /* Red-300 for invalid text */
+}
+
+/* Optional: Show green border for valid fields if desired, 
+   but user specifically asked for red for 'wrong' data */
+.was-validated .swap-field-wrapper:has(.swap-input:valid) {
+  border-color: rgba(34, 197, 94, 0.3);
+}

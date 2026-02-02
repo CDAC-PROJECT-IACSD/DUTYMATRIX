@@ -4,6 +4,18 @@ import API from "../services/api";
 import "../styles/dashboard.css";
 import LeaveRequest from "./LeaveRequest";
 import SwapShift from "./SwapShift";
+import { 
+  Shield, 
+  Calendar, 
+  RefreshCcw, 
+  ClipboardList,
+  User,
+  Phone,
+  MapPin,
+  Clock,
+  AlertTriangle,
+  FileText
+} from "lucide-react";
 
 export default function PoliceOfficerDashboard() {
   const { user } = useAuth();
@@ -18,6 +30,7 @@ export default function PoliceOfficerDashboard() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const [validated, setValidated] = useState(false);
 
   const [formData, setFormData] = useState({
     complainantName: "",
@@ -52,6 +65,14 @@ export default function PoliceOfficerDashboard() {
   // ================= SUBMIT FIR =================
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setValidated(true);
+
+    // Basic HTML5 validation check
+    if (!e.currentTarget.checkValidity()) {
+      e.stopPropagation();
+      return;
+    }
+
     setLoading(true);
     setError("");
     setSuccess("");
@@ -101,49 +122,51 @@ export default function PoliceOfficerDashboard() {
   return (
     <div className="dashboard-container">
       <h3 className="dashboard-title">Police Officer Dashboard</h3>
-      <h4 className="welcome-message">Welcome {user?.userName}</h4>
+      <h5 className="welcome-message">
+        Welcome, {user?.userName} | ID: {user?.userId}
+      </h5>
 
       {/* ================= ACTION BUTTONS ================= */}
       <div className="button-container">
         {/* LEAVE REQUEST */}
         <button
-          className="dashboard-btn btn-primary"
+          className={`dashboard-btn btn-primary ${showLeave ? 'active' : ''}`}
           onClick={() => {
             resetViews();
             setShowLeave(true);
           }}
         >
-          <img src="/src/assets/checkok.gif" alt="Icon" className="btn-icon" />
+          <Calendar size={20} className="me-2" />
           {showLeave ? "Hide Leave Request" : "Apply Leave"}
         </button>
 
         {/* SHIFT SWAP */}
         <button
-          className="dashboard-btn btn-warning"
+          className={`dashboard-btn btn-warning ${showSwap ? 'active' : ''}`}
           onClick={() => {
             resetViews();
             setShowSwap(true);
           }}
         >
-          <img src="/src/assets/checkok.gif" alt="Icon" className="btn-icon" />
+          <RefreshCcw size={20} className="me-2" />
           {showSwap ? "Hide Shift Swap" : "Shift Swap"}
         </button>
 
         {/* MY SHIFTS */}
         <button
-          className="dashboard-btn btn-success"
+          className={`dashboard-btn btn-success ${showMyShifts ? 'active' : ''}`}
           onClick={() => {
             resetViews();
             setShowMyShifts(true);
           }}
         >
-          <img src="/src/assets/checkok.gif" alt="Icon" className="btn-icon" />
+          <ClipboardList size={20} className="me-2" />
           {showMyShifts ? "Hide My Shifts" : "My Shifts"}
         </button>
 
         {/* FILE FIR (THIS CONTROLS FORM VISIBILITY) */}
         <button
-          className="dashboard-btn btn-danger"
+          className={`dashboard-btn btn-danger ${showFIR ? 'active' : ''}`}
           onClick={() => {
             if (showFIR) {
               resetViews();
@@ -153,7 +176,7 @@ export default function PoliceOfficerDashboard() {
             }
           }}
         >
-          <img src="/src/assets/checkok.gif" alt="Icon" className="btn-icon" />
+          <Shield size={20} className="me-2" />
           {showFIR ? "Hide File FIR" : "File FIR"}
         </button>
       </div>
@@ -161,204 +184,266 @@ export default function PoliceOfficerDashboard() {
       {/* ================= CONTENT AREA ================= */}
       <div className="content-area mt-4">
         {showLeave && (
-          <div className="card shadow-sm p-4">
+          <div className="card p-3 shadow-lg border-0" style={{ background: '#1e293b' }}>
             <LeaveRequest />
           </div>
         )}
 
         {showSwap && (
-          <div className="card shadow-sm p-4">
+          <div className="card p-3 shadow-lg border-0" style={{ background: '#1e293b' }}>
             <SwapShift />
           </div>
         )}
 
         {showMyShifts && (
-          <div className="card shadow-sm p-4 text-center">
-            <h4>My Duties</h4>
-            <p className="text-muted">
-              Duty roster functionality coming soon...
-            </p>
+          <div className="leave-approval-container mt-0 p-4 text-center">
+            <div className="d-flex align-items-center justify-content-center mb-4">
+              <ClipboardList className="text-success me-3" size={32} />
+              <h3 className="leave-title mb-0">My Duties</h3>
+            </div>
+            <div className="card-body py-5">
+              <p className="text-muted fs-5">
+                Duty roster functionality coming soon...
+              </p>
+            </div>
           </div>
         )}
 
         {/* ================= FIR FORM ================= */}
         {showFIR && (
-          <div className="row justify-content-center">
-            <div className="col-md-12">
-              <div className="card">
-                <div className="card-header">
-                  <i className="bi bi-file-earmark-text me-2"></i>
-                  File New First Information Report (FIR)
+          <div className="leave-approval-container mt-0 p-4">
+            <div className="d-flex align-items-center mb-4">
+              <Shield className="text-danger me-3" size={32} />
+              <h3 className="leave-title mb-0">New FIR Registration</h3>
+            </div>
+
+            <div className="card-body">
+              {success && (
+                <div className="alert alert-success py-2 text-center mb-4">{success}</div>
+              )}
+              {error && (
+                <div className="alert alert-danger py-2 text-center mb-4">{error}</div>
+              )}
+
+              {/* FORM (SUBMIT BUTTON ONLY SUBMITS) */}
+              <form 
+                onSubmit={handleSubmit} 
+                className={`row g-4 text-light ${validated ? 'was-validated' : ''}`}
+                noValidate
+              >
+                <div className="col-12">
+                  <h5 className="text-info mb-3 d-flex align-items-center">
+                    <User size={18} className="me-2" /> Complainant Details
+                  </h5>
                 </div>
 
-                <div className="card-body p-4">
-                  {success && (
-                    <div className="alert alert-success">{success}</div>
-                  )}
-                  {error && <div className="alert alert-danger">{error}</div>}
-
-                  {/* FORM (SUBMIT BUTTON ONLY SUBMITS) */}
-                  <form onSubmit={handleSubmit}>
-                    <h4 className="mb-3">Complainant Details</h4>
-
-                    <div className="row mb-3">
-                      <div className="col-md-6">
-                        <label className="form-label">Complainant Name</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="complainantName"
-                          value={formData.complainantName}
-                          onChange={handleChange}
-                          required
-                        />
-                      </div>
-
-                      <div className="col-md-6">
-                        <label className="form-label">Phone Number</label>
-                        <input
-                          type="tel"
-                          className="form-control"
-                          name="complainantPhone"
-                          value={formData.complainantPhone}
-                          onChange={handleChange}
-                          required
-                          pattern="[0-9]{10}"
-                        />
-                      </div>
-                    </div>
-
-                    <hr />
-
-                    <h4 className="mb-3">Crime Details</h4>
-
-                    <div className="row mb-3">
-                      <div className="col-md-6">
-                        <label className="form-label">Crime Type</label>
-                        <select
-                          className="form-select"
-                          name="crimeType"
-                          value={formData.crimeType}
-                          onChange={handleChange}
-                          required
-                        >
-                          <option value="">Select Crime Type</option>
-                          <option>Theft</option>
-                          <option>Assault</option>
-                          <option>Fraud</option>
-                          <option>Cybercrime</option>
-                          <option>Harassment</option>
-                          <option>Missing Person</option>
-                          <option>Other</option>
-                        </select>
-                      </div>
-
-                      <div className="col-md-6">
-                        <label className="form-label">Severity</label>
-                        <select
-                          className="form-select"
-                          name="severity"
-                          value={formData.severity}
-                          onChange={handleChange}
-                          required
-                        >
-                          <option value="LOW">Low</option>
-                          <option value="MEDIUM">Medium</option>
-                          <option value="HIGH">High</option>
-                          <option value="CRITICAL">Critical</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="row mb-3">
-                      <div className="col-md-6">
-                        <label className="form-label">Crime Location</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="crimeLocation"
-                          value={formData.crimeLocation}
-                          onChange={handleChange}
-                          required
-                        />
-                      </div>
-
-                      <div className="col-md-6">
-                        <label className="form-label">Crime Date & Time</label>
-                        <input
-                          type="datetime-local"
-                          className="form-control"
-                          name="crimeDateTime"
-                          value={formData.crimeDateTime}
-                          onChange={handleChange}
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <div className="mb-3">
-                      <label className="form-label">Crime Description</label>
-                      <textarea
-                        className="form-control"
-                        rows="3"
-                        name="crimeDescription"
-                        value={formData.crimeDescription}
+                <div className="col-md-6 mt-0">
+                  <div className="swap-input-group">
+                    <label className="swap-label">Complainant Name</label>
+                    <div className="swap-field-wrapper">
+                      <input
+                        type="text"
+                        className="swap-input"
+                        name="complainantName"
+                        placeholder="Full Name"
+                        value={formData.complainantName}
                         onChange={handleChange}
                         required
                       />
                     </div>
+                  </div>
+                </div>
 
-                    <div className="mb-3">
-                      <label className="form-label">Sections Applied</label>
+                <div className="col-md-6 mt-0">
+                  <div className="swap-input-group">
+                    <label className="swap-label">Phone Number</label>
+                    <div className="swap-field-wrapper">
+                      <Phone size={18} className="text-muted me-2" />
+                      <input
+                        type="tel"
+                        className="swap-input"
+                        name="complainantPhone"
+                        placeholder="10-digit mobile"
+                        value={formData.complainantPhone}
+                        onChange={handleChange}
+                        required
+                        pattern="[0-9]{10}"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-12 mt-4">
+                  <h5 className="text-warning mb-3 d-flex align-items-center">
+                    <FileText size={18} className="me-2" /> Incident Particulars
+                  </h5>
+                </div>
+
+                <div className="col-md-6 mt-0">
+                  <div className="swap-input-group">
+                    <label className="swap-label">Crime Type</label>
+                    <div className="swap-field-wrapper">
+                      <select
+                        className="swap-input"
+                        name="crimeType"
+                        value={formData.crimeType}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="">Select Category</option>
+                        <option>Theft</option>
+                        <option>Assault</option>
+                        <option>Fraud</option>
+                        <option>Cybercrime</option>
+                        <option>Harassment</option>
+                        <option>Missing Person</option>
+                        <option>Other</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-md-6 mt-0">
+                  <div className="swap-input-group">
+                    <label className="swap-label">Severity</label>
+                    <div className="swap-field-wrapper">
+                      <AlertTriangle size={18} className="text-muted me-2" />
+                      <select
+                        className="swap-input"
+                        name="severity"
+                        value={formData.severity}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="LOW">Low</option>
+                        <option value="MEDIUM">Medium</option>
+                        <option value="HIGH">High</option>
+                        <option value="CRITICAL">Critical</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-md-6">
+                  <div className="swap-input-group">
+                    <label className="swap-label">Crime Location</label>
+                    <div className="swap-field-wrapper">
+                      <MapPin size={18} className="text-muted me-2" />
                       <input
                         type="text"
-                        className="form-control"
+                        className="swap-input"
+                        name="crimeLocation"
+                        placeholder="Exact area/landmark"
+                        value={formData.crimeLocation}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-md-6">
+                  <div className="swap-input-group">
+                    <label className="swap-label">Crime Date & Time</label>
+                    <div className="swap-field-wrapper">
+                      <Clock size={18} className="text-muted me-2" />
+                      <input
+                        type="datetime-local"
+                        className="swap-input"
+                        name="crimeDateTime"
+                        value={formData.crimeDateTime}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-12">
+                  <div className="swap-input-group">
+                    <label className="swap-label">Crime Description</label>
+                    <div className="swap-field-wrapper py-2">
+                      <textarea
+                        className="swap-input"
+                        rows="3"
+                        name="crimeDescription"
+                        placeholder="Provide detailed account of the incident..."
+                        value={formData.crimeDescription}
+                        onChange={handleChange}
+                        style={{ resize: 'none' }}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-12">
+                  <div className="swap-input-group">
+                    <label className="swap-label">Sections Applied</label>
+                    <div className="swap-field-wrapper">
+                      <input
+                        type="text"
+                        className="swap-input"
                         name="sectionsApplied"
+                        placeholder="IPC/Legal sections"
                         value={formData.sectionsApplied}
                         onChange={handleChange}
                         required
                       />
                     </div>
+                  </div>
+                </div>
 
-                    <div className="form-check form-switch mb-3">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        name="accussedKnown"
-                        checked={formData.accussedKnown}
-                        onChange={handleChange}
-                      />
-                      <label className="form-check-label">
-                        Is Accused Known?
-                      </label>
-                    </div>
+                <div className="col-md-6 d-flex align-items-center">
+                  <div className="form-check form-switch custom-switch">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      name="accussedKnown"
+                      id="accusedSwitch"
+                      checked={formData.accussedKnown}
+                      onChange={handleChange}
+                    />
+                    <label className="form-check-label text-light ms-2" htmlFor="accusedSwitch">
+                      Is Accused Known?
+                    </label>
+                  </div>
+                </div>
 
-                    {formData.accussedKnown && (
-                      <div className="mb-3">
-                        <label className="form-label">Accused Name</label>
+                {formData.accussedKnown && (
+                  <div className="col-md-6">
+                    <div className="swap-input-group">
+                      <label className="swap-label">Accused Name</label>
+                      <div className="swap-field-wrapper">
                         <input
                           type="text"
-                          className="form-control"
+                          className="swap-input"
                           name="accusedName"
+                          placeholder="Name of accused"
                           value={formData.accusedName}
                           onChange={handleChange}
                           required
                         />
                       </div>
-                    )}
-
-                    <div className="d-flex justify-content-end">
-                      <button
-                        type="submit"
-                        className="btn btn-primary"
-                        disabled={loading}
-                      >
-                        {loading ? "Submitting..." : "File FIR"}
-                      </button>
                     </div>
-                  </form>
+                  </div>
+                )}
+
+                <div className="col-12 mt-4 text-center">
+                  <button
+                    type="submit"
+                    className="btn btn-danger btn-lg w-100 fw-bold py-3"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <span className="spinner-border spinner-border-sm me-2" />
+                    ) : (
+                      <Shield size={20} className="me-2" />
+                    )}
+                    {loading ? "Submitting..." : "File Official FIR"}
+                  </button>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         )}

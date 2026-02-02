@@ -1,7 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
+import { Mail, ShieldCheck, Lock, ArrowLeft } from "lucide-react";
 
-export default function ForgotPassword() {
+export default function ForgotPassword({ onOtpSent, onBack }) {
   const [step, setStep] = useState(1); // 1 = send otp, 2 = verify otp
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
@@ -28,6 +29,7 @@ export default function ForgotPassword() {
 
       setMsg("OTP sent to your email");
       setStep(2); // move to verify step
+      if (onOtpSent) onOtpSent();
 
     } catch (err) {
       console.error(err);
@@ -69,28 +71,34 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="container mt-5 col-md-4">
-      <h4 className="mb-3 text-center">
-        {step === 1 ? "Forgot Password" : "Verify OTP"}
-      </h4>
+    <div className="forgot-password-form">
+      {msg && (
+        <div className={`alert ${msg.includes("successful") || msg.includes("sent") ? "alert-success" : "alert-danger"} py-2 text-center mb-3`}>
+          {msg}
+        </div>
+      )}
 
       {/* STEP 1: EMAIL */}
       {step === 1 && (
         <>
-          <input
-            type="email"
-            className="form-control mb-2"
-            placeholder="Enter email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <div className="input-group-custom mb-3">
+            <Mail className="input-icon" size={20} />
+            <input
+              type="email"
+              className="form-control-custom"
+              placeholder="Enter Official Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
           <button
-            className="btn btn-primary w-100"
+            className="login-btn w-100 mb-3"
             onClick={sendOtp}
             disabled={loading}
           >
-            {loading ? "Sending OTP..." : "Send OTP"}
+            {loading ? "Sending..." : "Send Verification OTP"}
           </button>
         </>
       )}
@@ -98,32 +106,47 @@ export default function ForgotPassword() {
       {/* STEP 2: OTP + PASSWORD */}
       {step === 2 && (
         <>
-          <input
-            className="form-control mb-2"
-            placeholder="Enter OTP"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-          />
+          <div className="input-group-custom mb-2">
+            <ShieldCheck className="input-icon" size={20} />
+            <input
+              className="form-control-custom"
+              placeholder="Enter 6-Digit OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              required
+            />
+          </div>
 
-          <input
-            type="password"
-            className="form-control mb-2"
-            placeholder="New Password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-          />
+          <div className="input-group-custom mb-4">
+            <Lock className="input-icon" size={20} />
+            <input
+              type="password"
+              className="form-control-custom"
+              placeholder="New Secure Password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+            />
+          </div>
 
           <button
-            className="btn btn-success w-100"
+            className="login-btn w-100 mb-3"
             onClick={verifyOtp}
             disabled={loading}
           >
-            {loading ? "Verifying..." : "Verify OTP & Reset Password"}
+            {loading ? "Verifying..." : "Reset System Access"}
           </button>
         </>
       )}
 
-      {msg && <p className="mt-3 text-center">{msg}</p>}
+      <div className="text-center">
+        <span 
+          className="text-warning small cursor-pointer d-flex align-items-center justify-content-center"
+          onClick={onBack}
+        >
+          <ArrowLeft size={14} className="me-1" /> Back to Login
+        </span>
+      </div>
     </div>
   );
 }

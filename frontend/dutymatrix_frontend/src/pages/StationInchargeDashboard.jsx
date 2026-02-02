@@ -6,8 +6,8 @@ import SwapApprovalManual from "./SwapApproval";
 import LeaveApproval from "./LeaveApproval";
 import "../styles/dashboard.css";
 import ApplyLeave from "./LeaveRequest";
-
-
+import { Shield } from "lucide-react";
+import "../styles/leave_approval.css";
 export default function StationInchargeDashboard() {
   const { user, token } = useAuth();
 
@@ -171,124 +171,121 @@ export default function StationInchargeDashboard() {
         {showLeaveApprovals && <LeaveApproval />}
 
         {showFIRs && (
-          <>
+          <div className="leave-approval-container mt-4">
+            <div className="d-flex align-items-center mb-4">
+              <Shield className="text-warning me-3" size={32} />
+              <h3 className="leave-title mb-0">Station FIR Registry</h3>
+            </div>
+
             {error && (
               <div className="alert alert-danger text-center">{error}</div>
             )}
 
             {loading ? (
-              <div className="text-center mt-5">
-                <div className="spinner-border" />
-                <p>Loading station data...</p>
+              <div className="text-center py-5">
+                <div className="spinner-border text-warning" role="status" />
+                <p className="mt-2 text-gray">Retrieving records...</p>
               </div>
             ) : (
-              <div className="card">
-                <div className="card-header d-flex justify-content-between">
-                  <strong>Station FIR Registry</strong>
-                  <button
-                    className="btn btn-sm btn-outline-primary"
-                    onClick={fetchDashboardData}
-                  >
-                    Refresh
-                  </button>
-                </div>
+              <div className="table-responsive">
+                <table className="table table-dark table-striped table-hover mb-0">
+                  <thead>
+                    <tr>
+                      <th>FIR ID</th>
+                      <th>Status</th>
+                      <th>Filed By</th>
+                      <th>Investigating Officer</th>
+                      <th className="text-center">Actions</th>
+                    </tr>
+                  </thead>
 
-                <div className="table-responsive">
-                  <table className="table table-striped table-hover mb-0">
-                    <thead className="table-dark">
+                  <tbody>
+                    {firs.length === 0 ? (
                       <tr>
-                        <th>FIR ID</th>
-                        <th>Status</th>
-                        <th>Filed By</th>
-                        <th>Investigating Officer</th>
-                        <th>Action</th>
+                        <td colSpan="5" className="text-center py-4 text-muted">
+                          No digital FIRs found in registry.
+                        </td>
                       </tr>
-                    </thead>
-
-                    <tbody>
-                      {firs.length === 0 ? (
-                        <tr>
-                          <td colSpan="5" className="text-center">
-                            No FIRs found
+                    ) : (
+                      firs.map((fir) => (
+                        <tr key={fir.firId} className="align-middle">
+                          <td>#{fir.firId}</td>
+                          <td>
+                            <span className={`badge ${fir.status.toLowerCase() === 'pending' ? 'bg-warning text-dark' : 'bg-success'}`}>
+                              {fir.status}
+                            </span>
                           </td>
-                        </tr>
-                      ) : (
-                        firs.map((fir) => (
-                          <tr key={fir.firId}>
-                            <td>#{fir.firId}</td>
-                            <td>
-                              <span className="badge bg-warning">
-                                {fir.status}
+                          <td>
+                            <div className="fw-bold text-info">{fir.filedBy}</div>
+                            <div className="small text-muted text-uppercase" style={{ fontSize: '0.7rem' }}>Personnel</div>
+                          </td>
+                          <td>
+                            {fir.investigatingOfficer === "Not Assigned" ? (
+                              <span className="text-danger fw-bold">Unassigned</span>
+                            ) : (
+                              <span className="text-success fw-bold">
+                                {fir.investigatingOfficer}
                               </span>
-                            </td>
-                            <td>{fir.filedBy}</td>
-                            <td>
-                              {fir.investigatingOfficer === "Not Assigned" ? (
-                                <span className="text-danger">Unassigned</span>
-                              ) : (
-                                <span className="text-success">
-                                  {fir.investigatingOfficer}
-                                </span>
-                              )}
-                            </td>
-                            <td>
-                              {fir.investigatingOfficer === "Not Assigned" &&
-                              (assigningId === fir.firId ? (
-                                <div className="d-flex gap-2">
-                                  <select
-                                    className="form-select form-select-sm"
-                                    value={selectedOfficer}
-                                    onChange={(e) =>
-                                      setSelectedOfficer(e.target.value)
-                                    }
-                                  >
-                                    <option value="">Select Officer</option>
-                                    {officers.map((off) => (
-                                      <option
-                                        key={off.userId}
-                                        value={off.userId}
-                                      >
-                                        {off.name} ({off.rank})
-                                      </option>
-                                    ))}
-                                  </select>
-
-                                  <button
-                                    className="btn btn-sm btn-success"
-                                    onClick={() =>
-                                      handleAssign(fir.firId)
-                                    }
-                                  >
-                                    ✓
-                                  </button>
-
-                                  <button
-                                    className="btn btn-sm btn-secondary"
-                                    onClick={() => setAssigningId(null)}
-                                  >
-                                    ✕
-                                  </button>
-                                </div>
-                              ) : (
-                                <button
-                                  className="btn btn-sm btn-primary"
-                                  onClick={() =>
-                                    setAssigningId(fir.firId)
+                            )}
+                          </td>
+                          <td className="text-center">
+                            {fir.investigatingOfficer === "Not Assigned" &&
+                            (assigningId === fir.firId ? (
+                              <div className="d-flex justify-content-center gap-2">
+                                <select
+                                  className="form-select form-select-sm"
+                                  style={{ width: '150px', background: '#0f172a', color: '#fff', borderColor: '#334155' }}
+                                  value={selectedOfficer}
+                                  onChange={(e) =>
+                                    setSelectedOfficer(e.target.value)
                                   }
                                 >
-                                  Assign Officer
+                                  <option value="">Select Officer</option>
+                                  {officers.map((off) => (
+                                    <option
+                                      key={off.userId}
+                                      value={off.userId}
+                                    >
+                                      {off.name} ({off.rank})
+                                    </option>
+                                  ))}
+                                </select>
+
+                                <button
+                                  className="btn btn-sm btn-success"
+                                  onClick={() =>
+                                    handleAssign(fir.firId)
+                                  }
+                                >
+                                  ✓
                                 </button>
-                              ))}
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+
+                                <button
+                                  className="btn btn-sm btn-danger"
+                                  onClick={() => setAssigningId(null)}
+                                >
+                                  ✕
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                className="btn btn-sm btn-info text-dark d-flex align-items-center gap-1 mx-auto"
+                                onClick={() =>
+                                  setAssigningId(fir.firId)
+                                }
+                              >
+                                Assign Officer
+                              </button>
+                            ))}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
               </div>
             )}
-          </>
+          </div>
         )}
       </div>
     </div>

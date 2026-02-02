@@ -20,6 +20,7 @@ import Navbar from "./components/Navbar";
 
 import Notifications from "./components/Notifications";
 
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
   return (
@@ -32,28 +33,71 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/verify-otp" element={<VerifyOtpReset />} />
 
-        {/* DASHBOARDS */}
-        <Route path="/dashboard/officer" element={<PoliceOfficerDashboard />} />
-        <Route
-          path="/dashboard/stationIncharge"
-          element={<StationInchargeDashboard />}
-        />
-        <Route
-          path="/dashboard/commissioner"
-          element={<CommissionerDashboard />}
-        />
-
         {/* POLICE OFFICER */}
-        <Route path="/leave" element={<LeaveRequest />} />
-        <Route path="/shift-swap" element={<ShiftSwap />} />
+        <Route
+          path="/dashboard/officer"
+          element={
+            <ProtectedRoute allowedRoles={["POLICE_OFFICER"]}>
+              <PoliceOfficerDashboard />
+            </ProtectedRoute>
+          }
+        />
 
         {/* STATION INCHARGE */}
-        <Route path="/shifts" element={<CreateShift />} />
-        <Route path="/swap-approval" element={<SwapApproval />} />
+        <Route
+          path="/dashboard/stationIncharge"
+          element={
+            <ProtectedRoute allowedRoles={["STATION_INCHARGE"]}>
+              <StationInchargeDashboard />
+            </ProtectedRoute>
+          }
+        />
 
-        {/* Notification */}
-        <Route path="/notifications" element={<Notifications />} />
+        {/* COMMISSIONER */}
+        <Route
+          path="/dashboard/commissioner"
+          element={
+            <ProtectedRoute allowedRoles={["COMMISSIONER"]}>
+              <CommissionerDashboard />
+            </ProtectedRoute>
+          }
+        />
 
+        {/* SHARED / ROLE BASED */}
+        <Route
+          path="/leave"
+          element={
+            <ProtectedRoute
+              allowedRoles={["POLICE_OFFICER", "STATION_INCHARGE"]}
+            >
+              <LeaveRequest />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/shift-swap"
+          element={
+            <ProtectedRoute allowedRoles={["POLICE_OFFICER"]}>
+              <ShiftSwap />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute
+              allowedRoles={[
+                "POLICE_OFFICER",
+                "STATION_INCHARGE",
+                "COMMISSIONER",
+              ]}
+            >
+              <Notifications />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );

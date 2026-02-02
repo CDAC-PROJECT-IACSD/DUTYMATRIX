@@ -10,508 +10,399 @@ import {
 } from "../services/api";
 import { useAuth } from "../auth/AuthContext";
 import "../styles/dashboard.css";
+import { 
+  Shield, 
+  Users, 
+  Map, 
+  RefreshCcw, 
+  FileText, 
+  Calendar,
+  Check,
+  X,
+  Search,
+  Eye,
+  AlertCircle
+} from "lucide-react";
 
 export default function CommissionerDashboard() {
   const { user } = useAuth();
+  
+  // ================= VIEW STATES =================
+  const [activeTab, setActiveTab] = useState("OFFICERS"); // OFFICERS, DUTY, SWAP, LEAVE, FIR
+  
+  // ================= DATA STATES =================
   const [stations, setStations] = useState([]);
-  const [showTable, setShowTable] = useState(false);
   const [selectedRole, setSelectedRole] = useState("All");
   const [selectedRank, setSelectedRank] = useState("All");
 
-  //Duty Fetching
   const [duties, setDuties] = useState([]);
   const [selectedDate, setSelectedDate] = useState("");
-  const [showDuties, setShowDuties] = useState(false);
-  const [showDutyOversight, setShowDutyOversight] = useState(false);
+  const [loadingDuties, setLoadingDuties] = useState(false);
 
-  //Swap Request
   const [swapRequests, setSwapRequests] = useState([]);
-  const [showSwapRequests, setShowSwapRequests] = useState(false);
-
-  //Leave Requests
   const [leaveRequests, setLeaveRequests] = useState([]);
-  const [showLeaveRequests, setShowLeaveRequests] = useState(false);
-
-  //FIRs
   const [firs, setFirs] = useState([]);
-  const [showFirs, setShowFirs] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (showTable) {
-      getAllStations().then(setStations).catch(console.error);
-    }
-  }, [showTable]);
+    fetchData();
+  }, [activeTab]);
 
-  useEffect(() => {
-    if (showSwapRequests) {
-      getAllSwapsForCommissioner().then(setSwapRequests).catch(console.error);
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      if (activeTab === "OFFICERS") {
+        const data = await getAllStations();
+        setStations(data);
+      } else if (activeTab === "SWAP") {
+        const data = await getAllSwapsForCommissioner();
+        setSwapRequests(data);
+      } else if (activeTab === "LEAVE") {
+        const data = await getLeaveRequestsByStation();
+        setLeaveRequests(data);
+      } else if (activeTab === "FIR") {
+        const data = await getAllFirs();
+        setFirs(data);
+      }
+    } catch (err) {
+      console.error("Fetch failed", err);
+    } finally {
+      setLoading(false);
     }
-  }, [showSwapRequests]);
+  };
 
-  useEffect(() => {
-    if (showLeaveRequests) {
-      getLeaveRequestsByStation().then(setLeaveRequests).catch(console.error);
-    }
-  }, [showLeaveRequests]);
-
-  useEffect(() => {
-    if (showFirs) {
-      getAllFirs().then(setFirs).catch(console.error);
-    }
-  }, [showFirs]);
-
-  const loadDuties = () => {
+  const loadDuties = async () => {
     if (!selectedDate) return;
-    getDutiesByDate(selectedDate).then(setDuties).catch(console.error);
-    setShowDuties(true);
+    setLoadingDuties(true);
+    try {
+      const data = await getDutiesByDate(selectedDate);
+      setDuties(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingDuties(false);
+    }
   };
 
-  const resetViews = () => {
-    setShowTable(false);
-    setShowDutyOversight(false);
-    setShowSwapRequests(false);
-    setShowLeaveRequests(false);
-    setShowFirs(false);
+  const handleLeaveAction = async (id, action) => {
+    try {
+      if (action === 'approve') await approveLeave(id);
+      else await rejectLeave(id);
+      const data = await getLeaveRequestsByStation();
+      setLeaveRequests(data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const refreshLeaves = () => {
-    getLeaveRequestsByStation().then(setLeaveRequests).catch(console.error);
-  };
-  
   return (
-    <>
-      <div className="dashboard-container">
-        <h3 className="dashboard-title">Commissioner Dashboard</h3>
-        <h5 className="welcome-message">Welcome {user.userName}</h5>
+    <div className="dashboard-container">
+      <h3 className="dashboard-title">Commissioner Dashboard</h3>
+      <h5 className="welcome-message">
+        HQ Oversight | Commissioner {user.userName}
+      </h5>
 
-        <div className="button-container">
-          {/* ================= OFFICERS ================= */}
-          <button
-            className="dashboard-btn btn-primary"
-            onClick={() => {
-              resetViews();
-              setShowTable(true);
-            }}
-          >
-            <img
-              src="/src/assets/checkok.gif"
-              alt="Icon"
-              className="btn-icon"
-            />
-            {showTable ? "Hide Officers" : "View Station Officers"}
-          </button>
+      {/* ================= NAVIGATION TABS ================= */}
+      <div className="button-container">
+        <button
+          className={`dashboard-btn btn-primary ${activeTab === 'OFFICERS' ? 'active' : ''}`}
+          onClick={() => setActiveTab('OFFICERS')}
+        >
+          <Users size={20} className="me-2" /> Station Personnel
+        </button>
 
-          {/* ================= DUTY OVERSIGHT ================= */}
-          <button
-            className="dashboard-btn btn-success"
-            onClick={() => {
-              resetViews();
-              setShowDutyOversight(true);
-            }}
-          >
-            <img
-              src="/src/assets/checkok.gif"
-              alt="Icon"
-              className="btn-icon"
-            />
-            {showDutyOversight ? "Hide Duty Oversight" : "View Duty Oversight"}
-          </button>
+        <button
+          className={`dashboard-btn btn-success ${activeTab === 'DUTY' ? 'active' : ''}`}
+          onClick={() => setActiveTab('DUTY')}
+        >
+          <Map size={20} className="me-2" /> Duty Oversight
+        </button>
 
-          {/* ======================= Swap Request Show Button ================= */}
+        <button
+          className={`dashboard-btn btn-warning ${activeTab === 'SWAP' ? 'active' : ''}`}
+          onClick={() => setActiveTab('SWAP')}
+        >
+          <RefreshCcw size={20} className="me-2" /> Swap Requests
+        </button>
 
-          <button
-            className="dashboard-btn btn-warning"
-            onClick={() => {
-              resetViews();
-              setShowSwapRequests(true);
-            }}
-          >
-            <img
-              src="/src/assets/checkok.gif"
-              alt="Icon"
-              className="btn-icon"
-            />
-            {showSwapRequests ? "Hide Swap Requests" : "View Swap Requests"}
-          </button>
+        <button
+          className={`dashboard-btn btn-danger ${activeTab === 'LEAVE' ? 'active' : ''}`}
+          onClick={() => setActiveTab('LEAVE')}
+        >
+          <Calendar size={20} className="me-2" /> Leave Portal
+        </button>
 
-          {/* ======================= Leave Request Show Button ================= */}
-          <button
-            className="dashboard-btn btn-danger"
-            onClick={() => {
-              resetViews();
-              setShowLeaveRequests(true);
-            }}
-          >
-            <img
-              src="/src/assets/checkok.gif"
-              alt="Icon"
-              className="btn-icon"
-            />
-            {showLeaveRequests ? "Hide Leave Requests" : "View Leave Requests"}
-          </button>
+        <button
+          className={`dashboard-btn btn-info ${activeTab === 'FIR' ? 'active' : ''}`}
+          onClick={() => setActiveTab('FIR')}
+        >
+          <Shield size={20} className="me-2" /> Case Registry
+        </button>
+      </div>
 
-          {/* ======================= All FIRs Show Button ================= */}
-          <button
-            className="dashboard-btn btn-info"
-            onClick={() => {
-              resetViews();
-              setShowFirs(true);
-            }}
-          >
-            <img
-              src="/src/assets/checkok.gif"
-              alt="Icon"
-              className="btn-icon"
-            />
-            {showFirs ? "Hide FIRs" : "View All FIRs"}
-          </button>
-        </div>
+      {/* ================= CONTENT MAPPING ================= */}
+      <div className="content-area mt-4">
+        
+        {/* 1. STATION OFFICERS */}
+        {activeTab === 'OFFICERS' && (
+          <div className="leave-approval-container mt-0 p-4">
+            <div className="d-flex align-items-center mb-4">
+              <Users className="text-primary me-3" size={32} />
+              <h3 className="leave-title mb-0">Personnel Deployment</h3>
+            </div>
 
-        {/* ==================Content Area==================== */}
-        <div className="content-area mt-4">
-          {showTable && (
-            <>
-              <div className="row g-3">
-                <div className="col-md-6">
-                  <label className="form-label fw-semibold">
-                    Filter by Role
-                  </label>
-                  <select
-                    className="form-select"
-                    value={selectedRole}
-                    onChange={(e) => setSelectedRole(e.target.value)}
-                  >
-                    <option value="All">All</option>
-                    <option value="POLICE_OFFICER">Police Officer</option>
-                    <option value="STATION_INCHARGE">Station Incharge</option>
-                  </select>
-                </div>
-
-                <div className="col-md-6">
-                  <label className="form-label fw-semibold">
-                    Filter by Rank
-                  </label>
-                  <select
-                    className="form-select"
-                    value={selectedRank}
-                    onChange={(e) => setSelectedRank(e.target.value)}
-                  >
-                    <option value="All">All</option>
-                    <option value="CONSTABLE">Constable</option>
-                    <option value="INSPECTOR">Inspector</option>
-                    <option value="DSP">DSP</option>
-                    <option value="SP">SP</option>
-                    <option value="SENIOR_SP">Senior SP</option>
-                  </select>
-                </div>
+            <div className="row g-3 mb-4 bg-dark p-3 rounded shadow-sm border border-secondary">
+              <div className="col-md-6">
+                <label className="small text-muted text-uppercase fw-bold mb-1">Filter by Position</label>
+                <select className="form-select form-select-sm bg-dark text-light border-secondary" value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
+                  <option value="All">All Roles</option>
+                  <option value="POLICE_OFFICER">Police Officer</option>
+                  <option value="STATION_INCHARGE">Station Incharge</option>
+                </select>
               </div>
+              <div className="col-md-6">
+                <label className="small text-muted text-uppercase fw-bold mb-1">Filter by Rank</label>
+                <select className="form-select form-select-sm bg-dark text-light border-secondary" value={selectedRank} onChange={(e) => setSelectedRank(e.target.value)}>
+                  <option value="All">All Ranks</option>
+                  <option value="CONSTABLE">Constable</option>
+                  <option value="INSPECTOR">Inspector</option>
+                  <option value="DSP">DSP</option>
+                  <option value="SP">SP</option>
+                  <option value="SENIOR_SP">Senior SP</option>
+                </select>
+              </div>
+            </div>
 
-              {stations.map((station) => (
-                <div className="card mt-4" key={station.stationId}>
-                  <div className="card-header fw-bold">
-                    {station.stationName} — {station.location}
-                  </div>
-
-                  <table className="table table-bordered table-striped mb-0">
-                    <thead className="table-dark">
+            {stations.map((station) => (
+              <div className="mb-5" key={station.stationId}>
+                <div className="d-flex justify-content-between align-items-center mb-2 px-1">
+                  <h5 className="text-info mb-0 fw-bold">{station.stationName} <span className="text-muted fw-normal small">({station.location})</span></h5>
+                  <span className="badge bg-secondary">{station.users.length} Personnel</span>
+                </div>
+                <div className="table-responsive">
+                  <table className="table table-dark table-striped table-hover mb-0 align-middle">
+                    <thead>
                       <tr>
-                        <th>ID</th>
+                        <th>UID</th>
                         <th>Name</th>
-                        <th>Role</th>
+                        <th>Designation</th>
                         <th>Rank</th>
                       </tr>
                     </thead>
                     <tbody>
                       {station.users
-                        .filter(
-                          (u) =>
-                            (selectedRole === "All" ||
-                              u.role === selectedRole) &&
-                            (selectedRank === "All" || u.rank === selectedRank),
-                        )
-                        .map((u) => (
+                        .filter(u => (selectedRole === "All" || u.role === selectedRole) && (selectedRank === "All" || u.rank === selectedRank))
+                        .map(u => (
                           <tr key={u.userId}>
-                            <td>{u.userId}</td>
-                            <td>{u.name}</td>
-                            <td>{u.role}</td>
+                            <td className="text-muted">#{u.userId}</td>
+                            <td className="fw-bold">{u.name}</td>
+                            <td><span className="badge bg-outline-info border border-info text-info">{u.role.replace('_', ' ')}</span></td>
                             <td>{u.rank}</td>
                           </tr>
                         ))}
                     </tbody>
                   </table>
                 </div>
-              ))}
-            </>
-          )}
-
-          {showDutyOversight && (
-            <>
-              <hr className="my-5" />
-              <h4 className="fw-bold">Duty Oversight</h4>
-
-              <div className="row g-3 align-items-end mt-2">
-                <div className="col-md-4">
-                  <label className="form-label fw-semibold">Select Date</label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                  />
-                </div>
-
-                <div className="col-md-3">
-                  <button
-                    className="btn btn-success w-100"
-                    onClick={loadDuties}
-                  >
-                    View Duty Roster
-                  </button>
-                </div>
               </div>
+            ))}
+          </div>
+        )}
 
-              {showDuties && (
-                <div className="card mt-4">
-                  <div className="card-header fw-bold">
-                    Duty Roster — {selectedDate}
-                  </div>
+        {/* 2. DUTY OVERSIGHT */}
+        {activeTab === 'DUTY' && (
+          <div className="leave-approval-container mt-0 p-4">
+            <div className="d-flex align-items-center mb-4">
+              <Map className="text-success me-3" size={32} />
+              <h3 className="leave-title mb-0">Operational Duty Roster</h3>
+            </div>
 
-                  <table className="table table-bordered table-striped mb-0">
-                    <thead className="table-dark">
-                      <tr>
-                        <th>Shift ID</th>
-                        <th>Officer</th>
-                        <th>Shift</th>
-                        <th>Start</th>
-                        <th>End</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {duties.length === 0 && (
-                        <tr>
-                          <td colSpan="5" className="text-center">
-                            No duties found
-                          </td>
-                        </tr>
-                      )}
+            <div className="row g-3 align-items-end mb-4 bg-dark p-3 rounded shadow-sm border border-secondary">
+              <div className="col-md-5">
+                <label className="small text-muted text-uppercase fw-bold mb-1">Select Inspection Date</label>
+                <input type="date" className="form-control form-control-sm bg-dark text-light border-secondary" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
+              </div>
+              <div className="col-md-3">
+                <button className="btn btn-success btn-sm w-100 fw-bold d-flex align-items-center justify-content-center gap-2" onClick={loadDuties}>
+                  <Search size={16} /> Load Roster
+                </button>
+              </div>
+            </div>
 
-                      {duties.map((d) => (
-                        <tr key={d.shiftId}>
-                          <td>{d.shiftId}</td>
-                          <td>{d.officerName}</td>
-                          <td>
-                            <span
-                              className={`badge ${
-                                d.shiftType === "NIGHT_SHIFT"
-                                  ? "bg-dark"
-                                  : "bg-warning text-dark"
-                              }`}
-                            >
-                              {d.shiftType}
-                            </span>
-                          </td>
-                          <td>{d.startTime}</td>
-                          <td>{d.endTime}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </>
-          )}
-
-          {/* Swap Requests Section */}
-          {showSwapRequests && (
-            <>
-              <hr className="my-5" />
-              <h4 className="fw-bold">Swap Requests</h4>
-
-              <div className="card mt-3">
-                <table className="table table-bordered table-striped mb-0">
-                  <thead className="table-dark">
+            {loadingDuties ? (
+              <div className="text-center py-5"><div className="spinner-border text-success" /></div>
+            ) : duties.length > 0 ? (
+              <div className="table-responsive">
+                <table className="table table-dark table-striped table-hover align-middle mb-0">
+                  <thead>
                     <tr>
-                      <th>Swap ID</th>
-                      <th>Requesting Officer</th>
-                      <th>Target Officer</th>
-                      <th>Shift</th>
-                      <th>Status</th>
+                      <th>Shift ID</th>
+                      <th>Officer</th>
+                      <th>Assignment</th>
+                      <th>Window</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {swapRequests.length === 0 && (
-                      <tr>
-                        <td colSpan="5" className="text-center">
-                          No swap requests found
-                        </td>
-                      </tr>
-                    )}
-
-                    {swapRequests.map((s) => (
-                      <tr key={s.swapId}>
-                        <td>{s.swapId}</td>
-                        <td>{s.requestingUser}</td>
-                        <td>{s.targetUser}</td>
-                        <td>{s.shiftType}</td>
+                    {duties.map(d => (
+                      <tr key={d.shiftId}>
+                        <td>#{d.shiftId}</td>
+                        <td className="fw-bold text-info">{d.officerName}</td>
                         <td>
-                          <span
-                            className={`badge ${
-                              s.status === "PENDING"
-                                ? "bg-warning text-dark"
-                                : s.status === "APPROVED"
-                                  ? "bg-success"
-                                  : "bg-danger"
-                            }`}
-                          >
-                            {s.status}
+                          <span className={`badge ${d.shiftType === "NIGHT_SHIFT" ? "bg-dark border border-secondary" : "bg-warning text-dark"}`}>
+                            {d.shiftType.replace('_', ' ')}
                           </span>
                         </td>
+                        <td><small className="text-light">{d.startTime} - {d.endTime}</small></td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-            </>
-          )}
+            ) : selectedDate && <div className="text-center py-4 text-muted border border-secondary rounded border-dashed">No duty logs found for this date.</div>}
+          </div>
+        )}
 
-          {/* Leave Requests Section */}
-          {showLeaveRequests && (
-            <>
-              <hr className="my-5" />
-              <h4 className="fw-bold">Leave Requests</h4>
+        {/* 3. SWAP REQUESTS */}
+        {activeTab === 'SWAP' && (
+          <div className="leave-approval-container mt-0 p-4">
+            <div className="d-flex align-items-center mb-4">
+              <RefreshCcw className="text-warning me-3" size={32} />
+              <h3 className="leave-title mb-0">Personnel Swap Logs</h3>
+            </div>
 
-              <div className="card mt-3">
-                <table className="table table-bordered table-striped mb-0">
-                  <thead className="table-dark">
-                    <tr>
-                      <th>ID</th>
-                      <th>Name</th>
-                      <th>Role</th>
-                      <th>From</th>
-                      <th>To</th>
-                      <th>Reason</th>
-                      <th>Status</th>
-                      <th>Action</th>
+            <div className="table-responsive">
+              <table className="table table-dark table-striped table-hover align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>Swap ID</th>
+                    <th>Requester</th>
+                    <th>Target</th>
+                    <th>Shift Type</th>
+                    <th>Log Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {swapRequests.length === 0 ? (
+                    <tr><td colSpan="5" className="text-center py-4 text-muted">No swap logs found in registry.</td></tr>
+                  ) : swapRequests.map(s => (
+                    <tr key={s.swapId}>
+                      <td className="text-muted">#{s.swapId}</td>
+                      <td className="fw-bold">{s.requestingUser}</td>
+                      <td>{s.targetUser}</td>
+                      <td>{s.shiftType}</td>
+                      <td>
+                        <span className={`badge ${s.status === "PENDING" ? "bg-warning text-dark" : s.status === "APPROVED" ? "bg-success" : "bg-danger"}`}>
+                          {s.status}
+                        </span>
+                      </td>
                     </tr>
-                  </thead>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
-                  <tbody>
-                    {leaveRequests.length === 0 ? (
-                      <tr>
-                        <td colSpan="8" className="text-center">
-                          No leave requests found
-                        </td>
-                      </tr>
-                    ) : (
-                      leaveRequests.map((l) => (
-                        <tr key={l.leaveId}>
-                          <td>{l.leaveId}</td>
-                          <td>{l.userName}</td>
-                          <td>{l.userRole}</td>
-                          <td>{l.startDate}</td>
-                          <td>{l.endDate}</td>
-                          <td>{l.reason}</td>
-                          <td>
-                            <span
-                              className={`badge ${
-                                l.status === "PENDING"
-                                  ? "bg-warning text-dark"
-                                  : l.status === "APPROVED"
-                                    ? "bg-success"
-                                    : "bg-danger"
-                              }`}
-                            >
-                              {l.status}
-                            </span>
-                          </td>
+        {/* 4. LEAVE PORTAL */}
+        {activeTab === 'LEAVE' && (
+          <div className="leave-approval-container mt-0 p-4">
+            <div className="d-flex align-items-center mb-4">
+              <Calendar className="text-danger me-3" size={32} />
+              <h3 className="leave-title mb-0">Departmental Leave Review</h3>
+            </div>
 
-                          {/* ACTIONS */}
-                          <td>
-                            {l.userRole === "STATION_INCHARGE" &&
-                            l.status === "PENDING" ? (
-                              <>
-                                <button
-                                  className="btn btn-sm btn-success me-2"
-                                  onClick={() =>
-                                    approveLeave(l.leaveId).then(refreshLeaves)
-                                  }
-                                >
-                                  Approve
-                                </button>
-
-                                <button
-                                  className="btn btn-sm btn-danger"
-                                  onClick={() =>
-                                    rejectLeave(l.leaveId).then(refreshLeaves)
-                                  }
-                                >
-                                  Reject
-                                </button>
-                              </>
-                            ) : (
-                              <span className="text-muted">View Only</span>
-                            )}
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </>
-          )}
-
-          {/* All FIRs Section */}
-          {showFirs && (
-            <>
-              <hr className="my-5" />
-              <h4 className="fw-bold">All FIRs Registry</h4>
-
-              <div className="card mt-3">
-                <table className="table table-bordered table-striped mb-0">
-                  <thead className="table-dark">
-                    <tr>
-                      <th>FIR ID</th>
-                      <th>Status</th>
-                      <th>Filed By</th>
-                      <th>Investigating Officer</th>
-                      <th>Description</th>
-                      <th>Date</th>
+            <div className="table-responsive">
+              <table className="table table-dark table-striped table-hover align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Personnel</th>
+                    <th>Duration</th>
+                    <th>Justification</th>
+                    <th>Status</th>
+                    <th className="text-center">HQ Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {leaveRequests.length === 0 ? (
+                    <tr><td colSpan="6" className="text-center py-4 text-muted">No pending leave requests.</td></tr>
+                  ) : leaveRequests.map(l => (
+                    <tr key={l.leaveId}>
+                      <td className="text-muted">#{l.leaveId}</td>
+                      <td>
+                        <div className="fw-bold text-info">{l.userName}</div>
+                        <div className="small text-muted">{l.userRole.replace('_', ' ')}</div>
+                      </td>
+                      <td>
+                        <div className="small text-light">F: {l.startDate}</div>
+                        <div className="small text-light">T: {l.endDate}</div>
+                      </td>
+                      <td style={{ maxWidth: '200px' }} className="text-truncate">{l.reason}</td>
+                      <td>
+                        <span className={`badge ${l.status === "PENDING" ? "bg-warning text-dark" : l.status === "APPROVED" ? "bg-success" : "bg-danger"}`}>
+                          {l.status}
+                        </span>
+                      </td>
+                      <td className="text-center">
+                        {l.userRole === "STATION_INCHARGE" && l.status === "PENDING" ? (
+                          <div className="d-flex justify-content-center gap-2">
+                            <button className="btn btn-sm btn-success" onClick={() => handleLeaveAction(l.leaveId, 'approve')}><Check size={14} /></button>
+                            <button className="btn btn-sm btn-danger" onClick={() => handleLeaveAction(l.leaveId, 'reject')}><X size={14} /></button>
+                          </div>
+                        ) : <span className="small text-muted italic">ReadOnly</span>}
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {firs.map((fir) => (
-                      <tr key={fir.firId}>
-                        <td>#{fir.firId}</td>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
-                        <td>
-                          <span
-                            className={`status-badge ${fir.status.toLowerCase()}`}
-                          >
-                            {fir.status}
-                          </span>
-                        </td>
+        {/* 5. CASE REGISTRY */}
+        {activeTab === 'FIR' && (
+          <div className="leave-approval-container mt-0 p-4">
+            <div className="d-flex align-items-center mb-4">
+              <Shield className="text-info me-3" size={32} />
+              <h3 className="leave-title mb-0">Central FIR Registry</h3>
+            </div>
 
-                        <td>{fir.filedBy}</td>
-
-                        <td>{fir.investigatingOfficer}</td>
-
-                        <td>{fir.crimeDescription}</td>
-
-                        <td>
-                          {fir.crimeDateTime
-                            ? new Date(fir.crimeDateTime).toLocaleString()
-                            : "-"}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </>
-          )}
-        </div>
+            <div className="table-responsive">
+              <table className="table table-dark table-striped table-hover align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>FIR ID</th>
+                    <th>Status</th>
+                    <th>Station File</th>
+                    <th>I.O Name</th>
+                    <th>Details</th>
+                    <th>Timestamp</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {firs.length === 0 ? (
+                    <tr><td colSpan="6" className="text-center py-4 text-muted">No digital FIR logs found.</td></tr>
+                  ) : firs.map(fir => (
+                    <tr key={fir.firId}>
+                      <td className="fw-bold">#{fir.firId}</td>
+                      <td><span className={`badge ${fir.status === 'PENDING' ? 'bg-warning text-dark' : 'bg-success'}`}>{fir.status}</span></td>
+                      <td>
+                        <div className="fw-bold text-info">{fir.filedBy}</div>
+                      </td>
+                      <td>
+                        <div className="text-light small">{fir.investigatingOfficer}</div>
+                      </td>
+                      <td style={{ maxWidth: '250px' }}>
+                        <div className="text-truncate small text-light">{fir.crimeDescription}</div>
+                      </td>
+                      <td className="small text-muted">{fir.crimeDateTime ? new Date(fir.crimeDateTime).toLocaleString() : "-"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 }

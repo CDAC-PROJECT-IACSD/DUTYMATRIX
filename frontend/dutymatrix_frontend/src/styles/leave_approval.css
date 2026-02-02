@@ -1,0 +1,46 @@
+/* =========================================
+   SIMPLE THEME - LEAVE APPROVAL
+   ========================================= */
+
+.leave-approval-container {
+  padding: 24px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  color: #f8fafc;
+  font-family: 'Inter', sans-serif;
+}
+
+.leave-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+/* Custom adjustments for Bootstrap tables in this dark theme */
+.table-dark {
+  background-color: #0f172a !important;
+  --bs-table-bg: #0f172a;
+  --bs-table-striped-bg: #1e293b;
+  --bs-table-hover-bg: #334155;
+  border-color: #334155;
+}
+
+.table-dark thead th {
+  background-color: #1e293b !important;
+  color: #94a3b8 !important;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 30px;
+  color: #64748b;
+}
+
+.text-gray {
+  color: #94a3b8;
+}

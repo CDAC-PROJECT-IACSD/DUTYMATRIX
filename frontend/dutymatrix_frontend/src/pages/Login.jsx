@@ -387,6 +387,7 @@ import {
   Phone,
   Briefcase,
   MapPin,
+  ArrowRight,
 } from "lucide-react";
 import ForgotPassword from "./ForgotPassword";
 
@@ -507,99 +508,238 @@ export default function Login() {
 
   return (
     <div className="login-page">
-      <div className="container h-100 d-flex justify-content-center align-items-center">
-        <div className="login-card row g-0">
-          {/* LEFT SIDE */}
-          <div className="col-md-6 login-image-section d-none d-md-flex">
-            <div className="brand-content text-center">
-              <Shield size={80} className="mb-3 text-warning" />
-              <h2>DUTY MATRIX</h2>
-              <p>Secure Force Management System</p>
-            </div>
+      <div className="login-card">
+        {/* LEFT SIDE - BRANDING */}
+        <div className="login-image-section">
+          <div className="brand-content">
+            <Shield size={80} className="mb-3 text-warning" />
+            <h1 className="brand-title">DUTY MATRIX</h1>
+            <p className="brand-subtitle">Secure Force Management System</p>
+            <div className="brand-divider"></div>
+            <p className="brand-motto">Service • Honour • Safety</p>
           </div>
+        </div>
 
-          {/* RIGHT SIDE */}
-          <div className="col-md-6 login-form-section">
-            <div className="form-wrapper">
-              <h3 className="text-center text-white mb-3">
+        {/* RIGHT SIDE - FORM */}
+        <div className="login-form-section">
+          <div className="form-wrapper">
+            <div className="text-center mb-4">
+              <h2 className="text-white fw-bold">
                 {mode === "login" && "Officer Portal"}
                 {mode === "signup" && "New Registration"}
-                {mode === "forgot" && "Forgot Password"}
-                {mode === "reset" && "Reset Password"}
-              </h3>
+                {mode === "forgot" && "Access Recovery"}
+                {mode === "reset" && "Secure Reset"}
+              </h2>
+              <p className="text-white-50">
+                {mode === "login" && "Enter credentials to access network"}
+                {mode === "signup" && "Provide details for personnel record"}
+                {mode === "forgot" && "Follow steps to recover account"}
+                {mode === "reset" && "Create a new strong password"}
+              </p>
+            </div>
 
-              {success && <div className="alert alert-success">{success}</div>}
-              {error && <div className="alert alert-danger">{error}</div>}
+            {success && <div className="alert alert-success py-2 text-center">{success}</div>}
+            {error && <div className="alert alert-danger py-2 text-center">{error}</div>}
 
-              {/* LOGIN */}
-              {mode === "login" && (
-                <form onSubmit={handleLogin}>
+            {/* LOGIN FORM */}
+            {mode === "login" && (
+              <form onSubmit={handleLogin}>
+                <div className="input-group-custom mb-3">
+                  <Mail className="input-icon" size={20} />
                   <input
-                    className="form-control mb-3"
-                    placeholder="Email"
+                    type="email"
+                    className="form-control-custom"
+                    placeholder="Official Email"
                     value={loginData.email}
-                    onChange={(e) =>
-                      setLoginData({ ...loginData, email: e.target.value })
-                    }
+                    onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                    required
                   />
+                </div>
+
+                <div className="input-group-custom mb-3">
+                  <Lock className="input-icon" size={20} />
                   <input
                     type="password"
-                    className="form-control mb-2"
+                    className="form-control-custom"
                     placeholder="Password"
                     value={loginData.password}
-                    onChange={(e) =>
-                      setLoginData({ ...loginData, password: e.target.value })
-                    }
+                    onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                    required
                   />
+                </div>
 
-                  <button className="btn btn-warning w-100 mb-2">
-                    Login
-                  </button>
-
-                  <button
-                    type="button"
-                    className="btn btn-link text-warning"
+                <div className="text-end mb-4">
+                  <span
+                    className="text-warning small cursor-pointer"
                     onClick={() => setMode("forgot")}
                   >
                     Forgot Password?
-                  </button>
+                  </span>
+                </div>
 
-                  <p className="text-center mt-3 text-white">
-                    New user?{" "}
-                    <span
-                      className="text-warning cursor-pointer"
-                      onClick={() => setMode("signup")}
-                    >
-                      Register
-                    </span>
-                  </p>
-                </form>
-              )}
+                <button className="login-btn w-100 mb-3" disabled={loading}>
+                  {loading ? "Authenticating..." : "Secure Login"}
+                </button>
 
-              {/* FORGOT PASSWORD */}
-              {mode === "forgot" && (
-                <ForgotPassword
-                  onOtpSent={() => setMode("reset")}
-                  onBack={() => setMode("login")}
-                />
-              )}
+                <p className="text-center text-white-50 small">
+                  New Personnel?{" "}
+                  <span
+                    className="text-warning cursor-pointer"
+                    onClick={() => setMode("signup")}
+                  >
+                    Register Request
+                  </span>
+                </p>
+              </form>
+            )}
 
-              {/* RESET PASSWORD */}
-              {mode === "reset" && (
-                <form onSubmit={handleResetPassword}>
+            {/* SIGNUP FORM */}
+            {mode === "signup" && (
+              <form onSubmit={handleSignup}>
+                <div className="input-group-custom mb-2">
+                  <User className="input-icon" size={20} />
+                  <input
+                    className="form-control-custom"
+                    placeholder="Full Name"
+                    value={signupData.uname}
+                    onChange={(e) => setSignupData({ ...signupData, uname: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="input-group-custom mb-2">
+                  <Mail className="input-icon" size={20} />
+                  <input
+                    className="form-control-custom"
+                    type="email"
+                    placeholder="Official Email"
+                    value={signupData.uemail}
+                    onChange={(e) => setSignupData({ ...signupData, uemail: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="input-group-custom mb-2">
+                  <Lock className="input-icon" size={20} />
+                  <input
+                    className="form-control-custom"
+                    type="password"
+                    placeholder="Secure Password"
+                    value={signupData.upassword}
+                    onChange={(e) => setSignupData({ ...signupData, upassword: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="input-group-custom mb-2">
+                  <Phone className="input-icon" size={20} />
+                  <input
+                    className="form-control-custom"
+                    placeholder="Phone (10 digits)"
+                    value={signupData.uphoneNo}
+                    onChange={(e) => setSignupData({ ...signupData, uphoneNo: e.target.value })}
+                    pattern="[0-9]{10}"
+                    required
+                  />
+                </div>
+
+                <div className="row g-2 mb-2">
+                  <div className="col-6">
+                    <div className="input-group-custom">
+                      <Briefcase className="input-icon" size={20} />
+                      <select
+                        className="form-select-custom"
+                        value={signupData.urank}
+                        onChange={(e) => setSignupData({ ...signupData, urank: e.target.value })}
+                        required
+                      >
+                        <option value="CONSTABLE">Constable</option>
+                        <option value="SI">Sub-Inspector</option>
+                        <option value="INSPECTOR">Inspector</option>
+                        <option value="DSP">DSP</option>
+                        <option value="SP">SP</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="col-6">
+                    <div className="input-group-custom">
+                      <Shield className="input-icon" size={20} />
+                      <select
+                        className="form-select-custom"
+                        value={signupData.urole}
+                        onChange={(e) => setSignupData({ ...signupData, urole: e.target.value })}
+                        required
+                      >
+                        <option value="POLICE_OFFICER">Officer</option>
+                        <option value="STATION_INCHARGE">Incharge</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="input-group-custom mb-4">
+                  <MapPin className="input-icon" size={20} />
+                  <input
+                    className="form-control-custom"
+                    type="number"
+                    placeholder="Station ID"
+                    value={signupData.station_id}
+                    onChange={(e) => setSignupData({ ...signupData, station_id: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <button className="login-btn w-100" disabled={loading}>
+                  {loading ? "Processing..." : "Submit Registry"}
+                </button>
+
+                <p className="text-center mt-3 text-white-50 small">
+                  Existing Personnel?{" "}
+                  <span
+                    className="text-warning cursor-pointer"
+                    onClick={() => setMode("login")}
+                  >
+                    Login Securely
+                  </span>
+                </p>
+              </form>
+            )}
+
+            {/* FORGOT PASSWORD SECTION */}
+            {mode === "forgot" && (
+              <ForgotPassword
+                onOtpSent={() => setMode("reset")}
+                onBack={() => setMode("login")}
+              />
+            )}
+
+            {/* RESET PASSWORD FORM */}
+            {mode === "reset" && (
+              <form onSubmit={handleResetPassword}>
+                <div className="input-group-custom mb-4">
+                  <Lock className="input-icon" size={20} />
                   <input
                     type="password"
-                    className="form-control mb-3"
-                    placeholder="New Password"
+                    className="form-control-custom"
+                    placeholder="New Secure Password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
+                    required
                   />
-                  <button className="btn btn-warning w-100">
-                    Reset Password
-                  </button>
-                </form>
-              )}
-            </div>
+                </div>
+                <button className="login-btn w-100" disabled={loading}>
+                  {loading ? "Updating..." : "Confirm Reset"}
+                </button>
+                <p className="text-center mt-3">
+                  <span
+                    className="text-warning cursor-pointer small"
+                    onClick={() => setMode("login")}
+                  >
+                    Back to Login
+                  </span>
+                </p>
+              </form>
+            )}
           </div>
         </div>
       </div>
