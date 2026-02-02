@@ -5,6 +5,8 @@ import CreateShift from "./CreateShift";
 import SwapApprovalManual from "./SwapApproval";
 import LeaveApproval from "./LeaveApproval";
 import "../styles/dashboard.css";
+import ApplyLeave from "./LeaveRequest";
+
 
 export default function StationInchargeDashboard() {
   const { user, token } = useAuth();
@@ -14,6 +16,9 @@ export default function StationInchargeDashboard() {
   const [showSwapApprovals, setShowSwapApprovals] = useState(false);
   const [showFIRs, setShowFIRs] = useState(false);
   const [showLeaveApprovals, setShowLeaveApprovals] = useState(false);
+
+  const [showApplyLeave, setShowApplyLeave] = useState(false);
+
 
   // FIR Dashboard State
   const [firs, setFirs] = useState([]);
@@ -36,6 +41,7 @@ export default function StationInchargeDashboard() {
     setShowSwapApprovals(false);
     setShowFIRs(false);
     setShowLeaveApprovals(false);
+    setShowApplyLeave(false);
   };
 
   const fetchDashboardData = async () => {
@@ -104,6 +110,17 @@ export default function StationInchargeDashboard() {
         </button>
 
         <button
+  className="dashboard-btn btn-danger"
+  onClick={() => {
+    resetViews();
+    setShowApplyLeave(true);
+  }}
+>
+  Apply Leave
+</button>
+
+
+        <button
           className="dashboard-btn btn-warning"
           onClick={() => {
             resetViews();
@@ -141,6 +158,13 @@ export default function StationInchargeDashboard() {
             <CreateShift />
           </div>
         )}
+
+        {showApplyLeave && (
+  <div className="card p-3 mb-4">
+    <ApplyLeave />
+  </div>
+)}
+
 
         {showSwapApprovals && <SwapApprovalManual />}
 

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.DutyMatrix.dto.JwtUserDTO;
 import com.DutyMatrix.dto.LeaveRequestDTO;
 import com.DutyMatrix.dto.LeaveResponseDTO;
+import com.DutyMatrix.pojo.LeaveRequest;
 import com.DutyMatrix.services.LeaveService;
 
 import lombok.AllArgsConstructor;
@@ -72,6 +73,29 @@ public class LeaveController {
 
         return ResponseEntity.ok(
             leaveService.getPendingLeavesForCommissioner(user.getUserId())
+        );
+    }
+
+    
+
+    @GetMapping("/pending/station")
+    @PreAuthorize("hasRole('STATION_INCHARGE')")
+    public ResponseEntity<List<LeaveResponseDTO>> getPendingLeavesForStationIncharge(
+            @AuthenticationPrincipal JwtUserDTO user) {
+
+        return ResponseEntity.ok(
+            leaveService.getPendingPoliceLeaves(user.getUserId())
+                .stream()
+                .map(l -> new LeaveResponseDTO(
+                    l.getLid(),
+                    l.getUid().getUname(),
+                    l.getUid().getUrole().name(),
+                    l.getLStatDate(),
+                    l.getLEndDate(),
+                    l.getLReason(),
+                    l.getLStatus().name()
+                ))
+                .toList()
         );
     }
 

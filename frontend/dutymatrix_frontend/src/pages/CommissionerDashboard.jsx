@@ -8,7 +8,6 @@ import {
   rejectLeave,
   getAllFirs,
 } from "../services/api";
-import Navbar from "../components/Navbar";
 import { useAuth } from "../auth/AuthContext";
 import "../styles/dashboard.css";
 
@@ -78,12 +77,7 @@ export default function CommissionerDashboard() {
   const refreshLeaves = () => {
     getLeaveRequestsByStation().then(setLeaveRequests).catch(console.error);
   };
-
-  const loadSwap = () => {
-    // Implement swap request loading logic here
-    getAllSwapsForCommissioner().then(setSwapRequests).catch(console.error);
-  };
-
+  
   return (
     <>
       <div className="dashboard-container">
@@ -160,11 +154,11 @@ export default function CommissionerDashboard() {
           <button
             className="dashboard-btn btn-info"
             onClick={() => {
-                resetViews();
-                setShowFirs(true);
+              resetViews();
+              setShowFirs(true);
             }}
           >
-             <img
+            <img
               src="/src/assets/checkok.gif"
               alt="Icon"
               className="btn-icon"
@@ -477,41 +471,41 @@ export default function CommissionerDashboard() {
                 <table className="table table-bordered table-striped mb-0">
                   <thead className="table-dark">
                     <tr>
-    <th>FIR ID</th>
-    <th>Status</th>
-    <th>Filed By</th>
-    <th>Investigating Officer</th>
-    <th>Description</th>
-    <th>Date</th>
-  </tr>
+                      <th>FIR ID</th>
+                      <th>Status</th>
+                      <th>Filed By</th>
+                      <th>Investigating Officer</th>
+                      <th>Description</th>
+                      <th>Date</th>
+                    </tr>
                   </thead>
                   <tbody>
-  {firs.map(fir => (
-    <tr key={fir.firId}>
-      <td>#{fir.firId}</td>
+                    {firs.map((fir) => (
+                      <tr key={fir.firId}>
+                        <td>#{fir.firId}</td>
 
-      <td>
-        <span className={`status-badge ${fir.status.toLowerCase()}`}>
-          {fir.status}
-        </span>
-      </td>
+                        <td>
+                          <span
+                            className={`status-badge ${fir.status.toLowerCase()}`}
+                          >
+                            {fir.status}
+                          </span>
+                        </td>
 
-      <td>{fir.filedBy}</td>
+                        <td>{fir.filedBy}</td>
 
-      <td>{fir.investigatingOfficer}</td>
+                        <td>{fir.investigatingOfficer}</td>
 
-      <td>{fir.crimeDescription}</td>
+                        <td>{fir.crimeDescription}</td>
 
-      <td>
-  {fir.crimeDateTime
-    ? new Date(fir.crimeDateTime).toLocaleString()
-    : "-"}
-</td>
-
-    </tr>
-  ))}
-</tbody>
-
+                        <td>
+                          {fir.crimeDateTime
+                            ? new Date(fir.crimeDateTime).toLocaleString()
+                            : "-"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
                 </table>
               </div>
             </>

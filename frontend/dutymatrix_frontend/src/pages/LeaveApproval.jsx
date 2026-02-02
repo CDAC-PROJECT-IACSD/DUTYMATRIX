@@ -16,7 +16,7 @@ export default function LeaveApproval() {
 
     try {
       const res = await axios.get(
-        "http://localhost:9090/leave/pending",
+        "http://localhost:9090/leave/pending/station",
         {
           headers: {
             Authorization: `Bearer ${token}`,
