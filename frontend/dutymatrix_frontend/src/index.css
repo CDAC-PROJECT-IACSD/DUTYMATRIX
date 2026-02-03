@@ -11,3 +11,10 @@ body,
   height: 100%;
 background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
 }
+
+/* Fix for white date/time picker icons on dark theme */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}

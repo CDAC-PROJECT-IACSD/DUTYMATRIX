@@ -110,4 +110,20 @@ public class ShiftServiceImpl implements ShiftService {
 	            ))
 	            .toList();
 	}
+
+	@Override
+	public List<ShiftSummaryDTO> getShiftsByOfficer(Long userId) {
+		return shiftRepository.findByAssignedUser_Uid(userId).stream()
+				.map(shift -> new ShiftSummaryDTO(
+						shift.getShid(),
+						shift.getAssignedUser() != null
+								? shift.getAssignedUser().getUname()
+								: "Unassigned",
+						shift.getShtype().name(),
+						shift.getShDate(),
+						shift.getShStartTime(),
+						shift.getShEndTime()
+				))
+				.toList();
+	}
 }

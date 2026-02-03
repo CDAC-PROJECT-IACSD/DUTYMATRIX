@@ -108,5 +108,9 @@ export const getNotifications = async (userId) => {
   return res.data;
 };
 
+export const getMyShifts = async () => {
+  const res = await API.get("/shifts/my");
+  return res.data;
+};
 
 export default API;

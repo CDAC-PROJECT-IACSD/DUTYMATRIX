@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../auth/AuthContext";
-import API from "../services/api";
+import API, { getMyShifts } from "../services/api";
 import "../styles/dashboard.css";
 import LeaveRequest from "./LeaveRequest";
 import SwapShift from "./SwapShift";
@@ -31,6 +31,8 @@ export default function PoliceOfficerDashboard() {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [validated, setValidated] = useState(false);
+  const [shifts, setShifts] = useState([]);
+  const [loadingShifts, setLoadingShifts] = useState(false);
 
   const [formData, setFormData] = useState({
     complainantName: "",
@@ -119,6 +121,18 @@ export default function PoliceOfficerDashboard() {
     }
   };
 
+  const fetchShifts = async () => {
+    setLoadingShifts(true);
+    try {
+      const data = await getMyShifts();
+      setShifts(data);
+    } catch (err) {
+      console.error("Failed to fetch shifts", err);
+    } finally {
+      setLoadingShifts(false);
+    }
+  };
+
   return (
     <div className="dashboard-container">
       <h3 className="dashboard-title">Police Officer Dashboard</h3>
@@ -158,6 +172,7 @@ export default function PoliceOfficerDashboard() {
           onClick={() => {
             resetViews();
             setShowMyShifts(true);
+            fetchShifts();
           }}
         >
           <ClipboardList size={20} className="me-2" />
@@ -184,15 +199,11 @@ export default function PoliceOfficerDashboard() {
       {/* ================= CONTENT AREA ================= */}
       <div className="content-area mt-4">
         {showLeave && (
-          <div className="card p-3 shadow-lg border-0" style={{ background: '#1e293b' }}>
-            <LeaveRequest />
-          </div>
+          <LeaveRequest />
         )}
 
         {showSwap && (
-          <div className="card p-3 shadow-lg border-0" style={{ background: '#1e293b' }}>
-            <SwapShift />
-          </div>
+          <SwapShift />
         )}
 
         {showMyShifts && (
@@ -201,10 +212,42 @@ export default function PoliceOfficerDashboard() {
               <ClipboardList className="text-success me-3" size={32} />
               <h3 className="leave-title mb-0">My Duties</h3>
             </div>
-            <div className="card-body py-5">
-              <p className="text-muted fs-5">
-                Duty roster functionality coming soon...
-              </p>
+            <div className="card-body py-4">
+              {loadingShifts ? (
+                <div className="text-center py-5">
+                  <div className="spinner-border text-success" />
+                  <p className="mt-2 text-muted">Loading your roster...</p>
+                </div>
+              ) : shifts.length === 0 ? (
+                <p className="text-muted fs-5">No shifts assigned to you yet.</p>
+              ) : (
+                <div className="table-responsive">
+                  <table className="table table-dark table-striped table-hover align-middle mb-0">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Shift Type</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {shifts.map((s) => (
+                        <tr key={s.shiftId}>
+                          <td className="fw-bold">{s.shiftDate}</td>
+                          <td>
+                            <span className={`badge ${s.shiftType === 'DAY_SHIFT' ? 'bg-warning text-dark' : 'bg-dark border border-secondary'}`}>
+                              {s.shiftType.replace('_', ' ')}
+                            </span>
+                          </td>
+                          <td className="text-info">{s.startTime}</td>
+                          <td className="text-info">{s.endTime}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
         )}

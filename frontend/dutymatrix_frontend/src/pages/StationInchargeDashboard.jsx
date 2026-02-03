@@ -154,16 +154,12 @@ export default function StationInchargeDashboard() {
       {/* ================== CONTENT AREA ================== */}
       <div className="content-area mt-4">
         {showCreateShift && (
-          <div className="card p-3 mb-4">
-            <CreateShift />
-          </div>
+          <CreateShift />
         )}
 
         {showApplyLeave && (
-  <div className="card p-3 mb-4">
-    <ApplyLeave />
-  </div>
-)}
+          <ApplyLeave />
+        )}
 
 
         {showSwapApprovals && <SwapApprovalManual />}
