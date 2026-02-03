@@ -374,7 +374,7 @@
 // }
 
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -399,8 +399,17 @@ export default function Login() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const { login } = useAuth();
+  const { login, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      if (user.role === "POLICE_OFFICER") navigate("/dashboard/officer");
+      else if (user.role === "STATION_INCHARGE") navigate("/dashboard/stationIncharge");
+      else if (user.role === "COMMISSIONER") navigate("/dashboard/commissioner");
+    }
+  }, [isAuthenticated, user, navigate]);
 
   // ---------------- LOGIN STATE ----------------
   const [loginData, setLoginData] = useState({

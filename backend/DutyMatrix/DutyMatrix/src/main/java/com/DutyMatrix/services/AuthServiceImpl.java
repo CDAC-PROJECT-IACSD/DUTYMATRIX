@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
         );
     }
 
-    // ✅ RESET PASSWORD (WORKING)
+    //  RESET PASSWORD
     @Override
     public void resetPassword(String token, String newPassword) {
 
