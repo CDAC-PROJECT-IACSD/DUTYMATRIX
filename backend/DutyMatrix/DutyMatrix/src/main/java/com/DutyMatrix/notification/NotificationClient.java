@@ -13,7 +13,7 @@ public class NotificationClient {
 
     // Node.js notification service URL
     private static final String NOTIFICATION_URL =
-    		  "https://dutymatrix-notification-service.onrender.com/api/notifications/send";
+    		  "http://localhost:4000/api/notifications/send";
 
     public void send(Long userId, String message) {
 
