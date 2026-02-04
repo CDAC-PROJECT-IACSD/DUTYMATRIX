@@ -20,6 +20,7 @@ import com.DutyMatrix.dto.SwapRequestDTO;
 import com.DutyMatrix.dto.SwapResponseDTO;
 import com.DutyMatrix.pojo.SwapRequest;
 import com.DutyMatrix.services.SwapService;
+import com.DutyMatrix.services.LoggerClient;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -31,8 +32,9 @@ import lombok.AllArgsConstructor;
 public class SwapController {
 
     private final SwapService swapService;
+    private final LoggerClient loggerClient;   // ✅ LOGGER
 
-//    Only a POLICE_OFFICER can request a shift swap. Officer identity is taken from JWT, NOT from request body.
+    // 🔁 REQUEST SWAP
     @PreAuthorize("hasRole('POLICE_OFFICER')")
     @PostMapping
     public ResponseEntity<?> createSwap(
@@ -41,6 +43,12 @@ public class SwapController {
 
         SwapRequest swap =
                 swapService.createSwapRequest(dto, user.getUserId());
+
+        loggerClient.logAction(
+            "SHIFT_SWAP_REQUESTED",
+            "Shift swap requested",
+            user.getUserId()
+        );
 
         SwapResponseDTO response = new SwapResponseDTO();
         response.setSwapId(swap.getSwapId());
@@ -52,7 +60,7 @@ public class SwapController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-//    Only STATION_INCHARGE can approve swap requests. Approver identity is extracted from JWT.
+    // ✅ APPROVE SWAP
     @PreAuthorize("hasRole('STATION_INCHARGE')")
     @PutMapping("/{swapId}/approve")
     public ResponseEntity<?> approveSwap(
@@ -61,6 +69,12 @@ public class SwapController {
 
         SwapRequest swap =
                 swapService.approveSwap(swapId, user.getUserId());
+
+        loggerClient.logAction(
+            "SHIFT_SWAP_APPROVED",
+            "Shift swap approved",
+            user.getUserId()
+        );
 
         SwapResponseDTO response = new SwapResponseDTO();
         response.setSwapId(swap.getSwapId());
@@ -73,7 +87,7 @@ public class SwapController {
         return ResponseEntity.ok(response);
     }
 
-//    Only STATION_INCHARGE can reject swap requests.
+    // ❌ REJECT SWAP
     @PreAuthorize("hasRole('STATION_INCHARGE')")
     @PutMapping("/{swapId}/reject")
     public ResponseEntity<?> rejectSwap(
@@ -82,6 +96,12 @@ public class SwapController {
 
         SwapRequest swap =
                 swapService.rejectSwap(swapId, user.getUserId());
+
+        loggerClient.logAction(
+            "SHIFT_SWAP_REJECTED",
+            "Shift swap rejected",
+            user.getUserId()
+        );
 
         SwapResponseDTO response = new SwapResponseDTO();
         response.setSwapId(swap.getSwapId());
@@ -104,8 +124,6 @@ public class SwapController {
         );
     }
 
-    
-    //For commissioner dashboard
     @PreAuthorize("hasRole('COMMISSIONER')")
     @GetMapping("/all")
     public ResponseEntity<?> getAllSwapsForCommissioner(
@@ -132,5 +150,4 @@ public class SwapController {
 
         return ResponseEntity.ok(response);
     }
-
 }

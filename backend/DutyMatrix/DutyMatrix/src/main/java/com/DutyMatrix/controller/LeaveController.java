@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.DutyMatrix.dto.JwtUserDTO;
 import com.DutyMatrix.dto.LeaveRequestDTO;
 import com.DutyMatrix.dto.LeaveResponseDTO;
-import com.DutyMatrix.pojo.LeaveRequest;
 import com.DutyMatrix.services.LeaveService;
+import com.DutyMatrix.services.LoggerClient;
 
 import lombok.AllArgsConstructor;
 
@@ -29,43 +29,77 @@ import lombok.AllArgsConstructor;
 public class LeaveController {
 
     private final LeaveService leaveService;
+    private final LoggerClient loggerClient;
 
-    // APPLY LEAVE (Any authenticated user)
+    // 📝 APPLY LEAVE
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/apply")
     public ResponseEntity<String> applyLeave(
             @RequestBody LeaveRequestDTO dto,
             @AuthenticationPrincipal JwtUserDTO user) {
 
-        return ResponseEntity.ok(
-                leaveService.applyLeave(dto, user.getUserId())
-        );
+        String response =
+                leaveService.applyLeave(dto, user.getUserId());
+
+        try {
+            loggerClient.logAction(
+                "LEAVE_REQUESTED",
+                "Leave requested",
+                user.getUserId()
+            );
+        } catch (Exception e) {
+            System.out.println("Logger unavailable: LEAVE_REQUESTED");
+        }
+
+        return ResponseEntity.ok(response);
     }
 
-    // APPROVE LEAVE
+    // ✅ APPROVE LEAVE
     @PreAuthorize("hasAnyRole('STATION_INCHARGE','COMMISSIONER')")
     @PutMapping("/approve/{leaveId}")
     public ResponseEntity<String> approveLeave(
             @PathVariable Long leaveId,
             @AuthenticationPrincipal JwtUserDTO user) {
 
-        return ResponseEntity.ok(
-                leaveService.approveLeave(leaveId, user.getUserId())
-        );
+        String response =
+                leaveService.approveLeave(leaveId, user.getUserId());
+
+        try {
+            loggerClient.logAction(
+                "LEAVE_APPROVED",
+                "Leave approved",
+                user.getUserId()
+            );
+        } catch (Exception e) {
+            System.out.println("Logger unavailable: LEAVE_APPROVED");
+        }
+
+        return ResponseEntity.ok(response);
     }
 
-    // REJECT LEAVE
+    // ❌ REJECT LEAVE
     @PreAuthorize("hasAnyRole('STATION_INCHARGE','COMMISSIONER')")
     @PutMapping("/reject/{leaveId}")
     public ResponseEntity<String> rejectLeave(
             @PathVariable Long leaveId,
             @AuthenticationPrincipal JwtUserDTO user) {
 
-        return ResponseEntity.ok(
-                leaveService.rejectLeave(leaveId, user.getUserId())
-        );
+        String response =
+                leaveService.rejectLeave(leaveId, user.getUserId());
+
+        try {
+            loggerClient.logAction(
+                "LEAVE_REJECTED",
+                "Leave rejected",
+                user.getUserId()
+            );
+        } catch (Exception e) {
+            System.out.println("Logger unavailable: LEAVE_REJECTED");
+        }
+
+        return ResponseEntity.ok(response);
     }
-    
+
     @GetMapping("/pending")
     @PreAuthorize("hasRole('COMMISSIONER')")
     public ResponseEntity<List<LeaveResponseDTO>> getPendingLeaves(
@@ -75,8 +109,6 @@ public class LeaveController {
             leaveService.getPendingLeavesForCommissioner(user.getUserId())
         );
     }
-
-    
 
     @GetMapping("/pending/station")
     @PreAuthorize("hasRole('STATION_INCHARGE')")
@@ -98,6 +130,4 @@ public class LeaveController {
                 .toList()
         );
     }
-
-
 }

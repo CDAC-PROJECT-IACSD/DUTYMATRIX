@@ -22,6 +22,7 @@ import com.DutyMatrix.pojo.FIR;
 import com.DutyMatrix.pojo.User;
 import com.DutyMatrix.repositories.UserRepository;
 import com.DutyMatrix.services.FirFileService;
+import com.DutyMatrix.services.LoggerClient;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -34,11 +35,20 @@ public class FirController {
 
     private final FirFileService firService;
     private final UserRepository userRepository;
+    private final LoggerClient loggerClient;   // ✅ LOGGER INJECTED
 
+    // ✅ FIR CREATED
     @PostMapping
     public ResponseEntity<?> fileFIR(@Valid @RequestBody FirFileDTO firDto) {
 
         FIR fir = firService.fileFir(firDto);
+
+        // 🔥 LOG FIR CREATED
+        loggerClient.logAction(
+            "FIR_CREATED",
+            "FIR created successfully",
+            fir.getFiledBy().getUid()   // user who filed FIR
+        );
 
         FirResponseDTO dto = new FirResponseDTO();
         dto.setFirId(fir.getFirId());
@@ -50,6 +60,7 @@ public class FirController {
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
+    // ✅ FIR ASSIGNED
     @PreAuthorize("hasRole('STATION_INCHARGE')")
     @PutMapping("/{firId}/assign")
     public ResponseEntity<?> assignOfficer(
@@ -58,6 +69,13 @@ public class FirController {
 
         FIR fir = firService.assignInvestigatingOfficer(firId, officerId);
 
+        // 🔥 LOG FIR ASSIGNED
+        loggerClient.logAction(
+            "FIR_ASSIGNED",
+            "Investigating officer assigned to FIR",
+            officerId
+        );
+
         return ResponseEntity.ok("Officer assigned successfully");
     }
 
@@ -65,7 +83,7 @@ public class FirController {
     public ResponseEntity<?> listByStation(@PathVariable Long stationId) {
         return ResponseEntity.ok(firService.getAllFirsByStation(stationId));
     }
-    
+
     @PreAuthorize("hasRole('COMMISSIONER')")
     @GetMapping("/all")
     public ResponseEntity<?> getAllFirsForCommissioner() {
@@ -84,8 +102,4 @@ public class FirController {
                 firService.getAllFirsByStation(incharge.getStation().getSid())
         );
     }
-
-    
-
-
 }

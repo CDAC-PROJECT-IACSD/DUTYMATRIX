@@ -15,9 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.DutyMatrix.dto.ApiResponse;
 import com.DutyMatrix.dto.JwtUserDTO;
 import com.DutyMatrix.dto.UserRegisterDTO;
-import com.DutyMatrix.pojo.UserRole;
-import com.DutyMatrix.repositories.UserRepository;
 import com.DutyMatrix.services.UserService;
+import com.DutyMatrix.services.LoggerClient;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -27,25 +26,41 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/users")
 @AllArgsConstructor
 public class UserController {
-	private final UserService userService;
-	private final UserRepository userRepository;
-	
-	@PostMapping("/signup")
-	public ResponseEntity<?> registerStudent(@Valid @RequestBody UserRegisterDTO dto){
-		System.out.println("in police resister = "+dto);
-		
-		userService.registerUser(dto);
-			return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse("User Created Successfully","Success"));
-		
-	}
-	
-	
-	@GetMapping("/station/{stationId}")
-	public ResponseEntity<?> listByStation(@PathVariable Long stationId) {
-	    return ResponseEntity.ok(userService.getOfficersByStation(stationId));
-	}
-	
-	@PreAuthorize("hasRole('STATION_INCHARGE')")
+
+    private final UserService userService;
+    private final LoggerClient loggerClient;   // ✅ LOGGER
+
+    // 👮 USER SIGNUP
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerStudent(
+            @Valid @RequestBody UserRegisterDTO dto) {
+
+        Long userId = userService.registerUser(dto); // ✅ returns userId
+
+        // ✅ SAFE LOGGER CALL
+        try {
+            loggerClient.logAction(
+                "PROFILE_UPDATED",
+                "User registered successfully",
+                userId
+            );
+        } catch (Exception e) {
+            System.out.println("Logger service unavailable, skipping signup log");
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ApiResponse("User Created Successfully", "Success"));
+    }
+
+    @GetMapping("/station/{stationId}")
+    public ResponseEntity<?> listByStation(@PathVariable Long stationId) {
+        return ResponseEntity.ok(
+                userService.getOfficersByStation(stationId)
+        );
+    }
+
+    @PreAuthorize("hasRole('STATION_INCHARGE')")
     @GetMapping("/station-incharge/officers")
     public ResponseEntity<?> getOfficersForStationIncharge(
             @AuthenticationPrincipal JwtUserDTO jwtUser) {
