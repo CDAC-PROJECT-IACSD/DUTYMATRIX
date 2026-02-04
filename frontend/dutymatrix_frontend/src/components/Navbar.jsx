@@ -1,9 +1,13 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { Bell } from "lucide-react";
+import logo from "../assets/logo.png";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const location = useLocation();
+
+  const isLoginPage = location.pathname === "/";
 
   const isOfficer = user?.role === "POLICE_OFFICER";
   const isStationIncharge = user?.role === "STATION_INCHARGE";
@@ -24,7 +28,16 @@ export default function Navbar() {
 
   return (
     <nav className="navbar navbar-expand-md navbar-dark bg-dark px-3">
-      <span className="navbar-brand fw-bold">DutyMatrix</span>
+      <Link to="/" className="navbar-brand d-flex align-items-center fw-bold">
+        <img
+          src={logo}
+          alt="DutyMatrix Logo"
+          width="40"
+          height="40"
+          className="d-inline-block align-top me-2"
+        />
+        DutyMatrix
+      </Link>
 
       <button
         className="navbar-toggler"
@@ -36,24 +49,34 @@ export default function Navbar() {
       </button>
 
       <div className="collapse navbar-collapse" id="navbarContent">
-        <div className="ms-auto d-flex flex-column flex-md-row align-items-md-center gap-2 mt-3 mt-md-0">
-          
-          <span className="text-light small text-center">
-            {getDashboardName()}
-          </span>
+        {!isLoginPage && user && (
+          <div className="ms-auto d-flex flex-column flex-md-row align-items-md-center gap-2 mt-3 mt-md-0">
+            {/* Officer Links */}
+            {isOfficer && <>{/* extra features in future add in nav bar */}</>}
 
-          {/* Notifications */}
-          <Link
-            to="/notifications"
-            className="btn btn-dark position-relative me-3"
-          >
-            <Bell size={20} />
-          </Link>
+            {/* Station Incharge Links */}
+            {isStationIncharge && (
+              <>
+                {/* if any thing extra we want to add then we can add it here.... */}
+              </>
+            )}
 
-          <button className="btn btn-outline-danger btn-sm" onClick={logout}>
-            Logout
-          </button>
-        </div>
+            {/* Dashboard Name */}
+            <span className="text-light small text-center">
+              {getDashboardName()}
+            </span>
+            <Link
+              to="/notifications"
+              className="btn btn-dark position-relative me-3"
+            >
+              <Bell size={20} />
+            </Link>
+
+            <button className="btn btn-outline-danger btn-sm" onClick={logout}>
+              Logout
+            </button>
+          </div>
+        )}
       </div>
     </nav>
   );
