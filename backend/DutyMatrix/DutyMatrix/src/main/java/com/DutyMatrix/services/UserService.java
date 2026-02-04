@@ -5,7 +5,7 @@ import com.DutyMatrix.dto.StationUserDTO;
 import java.util.List;
 
 public interface UserService {
-	String registerUser(UserRegisterDTO userRegisterDTO);
+	Long registerUser(UserRegisterDTO userRegisterDTO);
 	
 	List<StationUserDTO> getOfficersByStation(Long stationId);
 	

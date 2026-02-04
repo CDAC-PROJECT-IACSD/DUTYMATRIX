@@ -28,23 +28,27 @@ public class UserServiceImpl implements UserService {
 	private final PasswordEncoder passwordEncoder;
 	private final ModelMapper mapper;
 	@Override
-	public String registerUser(UserRegisterDTO userRegisterDTO) {
-		if(userRepo.existsByUemail(userRegisterDTO.getUemail())) {
-			throw new ResourceAlreadyExist("User already Exist with email : "+userRegisterDTO.getUemail());
-		}
-		
-		Station station = stationRepo.findById(userRegisterDTO.getStation_id()).orElseThrow(()-> new ResourceNotFoundException("station not found"));
-		
-		User user = mapper.map(userRegisterDTO, User.class);
-		user.setUpassword(passwordEncoder.encode(userRegisterDTO.getUpassword()));
-		user.setStation(station);
-		
-		User saved = userRepo.save(user);
-		
-		return "New user created "+saved.getUemail();
+	public Long registerUser(UserRegisterDTO userRegisterDTO) {
+
+	    if (userRepo.existsByUemail(userRegisterDTO.getUemail())) {
+	        throw new ResourceAlreadyExist(
+	            "User already Exist with email : " + userRegisterDTO.getUemail()
+	        );
+	    }
+
+	    Station station = stationRepo.findById(userRegisterDTO.getStation_id())
+	        .orElseThrow(() -> new ResourceNotFoundException("station not found"));
+
+	    User user = mapper.map(userRegisterDTO, User.class);
+	    user.setUpassword(passwordEncoder.encode(userRegisterDTO.getUpassword()));
+	    user.setStation(station);
+
+	    User saved = userRepo.save(user);
+
+	    // ✅ RETURN USER ID (THIS IS THE FIX)
+	    return saved.getUid();
 	}
 
-	
 	
 	@Override
     public List<StationUserDTO> getOfficersByStation(Long stationId) {

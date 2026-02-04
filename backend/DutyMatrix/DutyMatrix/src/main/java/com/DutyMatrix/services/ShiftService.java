@@ -12,8 +12,6 @@ public interface ShiftService {
     List<ShiftSummaryDTO> getShiftsForStation(Long stationId);
     
     List<ShiftSummaryDTO> getShiftsForStationAndDate(Long stationId, LocalDate date);
-
-    List<ShiftSummaryDTO> getShiftsByOfficer(Long userId);
 }
 
 
