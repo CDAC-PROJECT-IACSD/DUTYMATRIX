@@ -1,3 +1,4 @@
+
 import { Routes, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -7,7 +8,6 @@ import PoliceOfficerDashboard from "./pages/PoliceOfficerDashboard";
 import StationInchargeDashboard from "./pages/StationInchargeDashboard";
 import CommissionerDashboard from "./pages/CommissionerDashboard";
 import ShiftSwap from "./pages/SwapShift";
-
 import LeaveRequest from "./pages/LeaveRequest";
 import CreateShift from "./pages/CreateShift";
 import SwapApproval from "./pages/SwapApproval";
@@ -17,9 +17,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import VerifyOtpReset from "./pages/VerifyOtpReset";
 
 import Navbar from "./components/Navbar";
-
 import Notifications from "./components/Notifications";
-
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {

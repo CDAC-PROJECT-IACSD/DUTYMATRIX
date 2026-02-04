@@ -1,1 +1,17 @@
 /.metadata/
+# Visual Studio
+.vs/
+
+# Visual Studio Code
+.vscode/
+
+# Build outputs
+bin/
+obj/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db

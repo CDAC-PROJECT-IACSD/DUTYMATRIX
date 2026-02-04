@@ -26,7 +26,6 @@ export default function Navbar() {
     <nav className="navbar navbar-expand-md navbar-dark bg-dark px-3">
       <span className="navbar-brand fw-bold">DutyMatrix</span>
 
-      {/* Mobile Toggle */}
       <button
         className="navbar-toggler"
         type="button"
@@ -38,20 +37,12 @@ export default function Navbar() {
 
       <div className="collapse navbar-collapse" id="navbarContent">
         <div className="ms-auto d-flex flex-column flex-md-row align-items-md-center gap-2 mt-3 mt-md-0">
-          {/* Officer Links */}
-          {isOfficer && <>{/* extra features in future add in nav bar */}</>}
-
-          {/* Station Incharge Links */}
-          {isStationIncharge && (
-            <>
-              {/* if any thing extra we want to add then we can add it here.... */}
-            </>
-          )}
-
-          {/* Dashboard Name */}
+          
           <span className="text-light small text-center">
             {getDashboardName()}
           </span>
+
+          {/* Notifications */}
           <Link
             to="/notifications"
             className="btn btn-dark position-relative me-3"
