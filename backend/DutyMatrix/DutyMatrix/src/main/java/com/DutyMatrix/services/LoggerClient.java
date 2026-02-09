@@ -16,7 +16,8 @@ public class LoggerClient {
 
     public void logAction(String actionType, String description, Long userId) {
         try {
-            String url = "http://localhost:5237/api/logger/log"; // .NET Logger
+            String envUrl = System.getenv("LOGGER_URL");
+            String url = (envUrl != null && !envUrl.isEmpty()) ? envUrl + "/api/logger/log" : "http://localhost:5237/api/logger/log";
 
             Map<String, Object> body = new HashMap<>();
             body.put("hactionType", actionType);
