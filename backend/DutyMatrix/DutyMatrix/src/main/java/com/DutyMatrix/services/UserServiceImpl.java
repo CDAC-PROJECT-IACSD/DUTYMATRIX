@@ -36,8 +36,11 @@ public class UserServiceImpl implements UserService {
 	        );
 	    }
 
-	    Station station = stationRepo.findById(userRegisterDTO.getStation_id())
-	        .orElseThrow(() -> new ResourceNotFoundException("station not found"));
+	    Station station = null;
+	    if (userRegisterDTO.getStation_id() != null) {
+	        station = stationRepo.findById(userRegisterDTO.getStation_id())
+	            .orElseThrow(() -> new ResourceNotFoundException("station not found"));
+	    }
 
 	    User user = mapper.map(userRegisterDTO, User.class);
 	    user.setUpassword(passwordEncoder.encode(userRegisterDTO.getUpassword()));

@@ -32,12 +32,14 @@ public class CustomJwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
+        System.out.println("Processing request: " + path); // ✅ DEBUG LOG
 
         // ✅ Allow public endpoints without JWT
         if (path.startsWith("/auth")
                 || path.startsWith("/users/signup")
                 || path.startsWith("/swagger-ui")
                 || path.startsWith("/v3/api-docs")) {
+            System.out.println("Path allowed without JWT: " + path);
             filterChain.doFilter(request, response);
             return;
         }
