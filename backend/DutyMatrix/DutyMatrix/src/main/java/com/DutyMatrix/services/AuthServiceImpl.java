@@ -17,6 +17,8 @@ import com.DutyMatrix.security.OtpUtil;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
+import com.DutyMatrix.custom_exception.AuthException;
+
 @Service
 @AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -31,11 +33,20 @@ public class AuthServiceImpl implements AuthService {
     // ---------------- LOGIN ----------------
     @Override
     public LoginResponseDTO login(LoginRequestDTO request) {
-        User user = userRepository.findByUemail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+        User user;
+        try {
+            user = userRepository.findByUemail(request.getEmail())
+                .orElseThrow(() -> new AuthException("Invalid email or password"));
+        } catch (AuthException e) {
+            throw e;
+        } catch (Exception e) {
+            System.err.println("DATABASE ERROR DURING LOGIN: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Database error: " + e.getMessage());
+        }
 
         if (!passwordEncoder.matches(request.getPassword(), user.getUpassword())) {
-            throw new RuntimeException("Invalid email or password");
+            throw new AuthException("Invalid email or password");
         }
 
         Long stationId = (user.getStation() != null) ? user.getStation().getSid() : null;

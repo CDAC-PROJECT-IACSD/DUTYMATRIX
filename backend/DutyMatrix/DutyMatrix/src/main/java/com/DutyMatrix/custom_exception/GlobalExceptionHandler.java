@@ -12,8 +12,17 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.DutyMatrix.custom_exception.AuthException;
+import com.DutyMatrix.custom_exception.ResourceAlreadyExist;
+import com.DutyMatrix.custom_exception.ResourceNotFoundException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<?> handleAuthException(AuthException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(e.getMessage(), "Authentication Failed"));
+    }
 
 	// Validation Handler
 	@ExceptionHandler(MethodArgumentNotValidException.class)
