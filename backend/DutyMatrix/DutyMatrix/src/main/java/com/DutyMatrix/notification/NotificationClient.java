@@ -12,8 +12,8 @@ public class NotificationClient {
     private final RestTemplate restTemplate;
 
     // Node.js notification service URL
-    private static final String NOTIFICATION_URL =
-            "http://localhost:4000/api/notifications/send";
+    @Value("${NOTIFICATION_SERVICE_URL:http://localhost:4000/api/notifications/send}")
+    private String notificationUrl;
 
     public void send(Long userId, String message) {
 
@@ -22,7 +22,7 @@ public class NotificationClient {
                     new NotificationRequest(userId, message);
 
             restTemplate.postForObject(
-                    NOTIFICATION_URL,
+                    notificationUrl,
                     request,
                     String.class
             );

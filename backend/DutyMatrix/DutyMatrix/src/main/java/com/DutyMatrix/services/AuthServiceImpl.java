@@ -31,7 +31,6 @@ public class AuthServiceImpl implements AuthService {
     // ---------------- LOGIN ----------------
     @Override
     public LoginResponseDTO login(LoginRequestDTO request) {
-
         User user = userRepository.findByUemail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid email or password"));
 
@@ -39,11 +38,13 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Invalid email or password");
         }
 
+        Long stationId = (user.getStation() != null) ? user.getStation().getSid() : null;
+
         String token = jwtUtils.generateToken(
                 user.getUid(),
                 user.getUemail(),
                 user.getUrole().name(),
-                user.getStation().getSid()
+                stationId
         );
 
         return new LoginResponseDTO(
@@ -51,7 +52,7 @@ public class AuthServiceImpl implements AuthService {
                 user.getUname(),
                 user.getUemail(),
                 user.getUrole(),
-                user.getStation().getSid(),
+                stationId,
                 token
         );
     }

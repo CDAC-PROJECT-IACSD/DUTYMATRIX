@@ -30,15 +30,18 @@ public class JwtUtils {
 
     // ✅ Generate JWT
     public String generateToken(Long userId, String email, String role, Long stationId) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
+        claims.put("role", role);
+        if (stationId != null) {
+            claims.put("stationId", stationId);
+        }
+
         return Jwts.builder()
                 .subject(email) // 👈 email stored here
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
-                .claims(Map.of(
-                        "userId", userId,
-                        "role", role,
-                        "stationId", stationId
-                ))
+                .claims(claims)
                 .signWith(key)
                 .compact();
     }
