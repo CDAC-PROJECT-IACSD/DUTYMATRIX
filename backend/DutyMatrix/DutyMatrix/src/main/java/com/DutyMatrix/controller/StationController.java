@@ -20,7 +20,6 @@ import lombok.AllArgsConstructor;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/station")
-@CrossOrigin(origins = "http://localhost:5173")
 public class StationController {
 
     private final StationService stationService;

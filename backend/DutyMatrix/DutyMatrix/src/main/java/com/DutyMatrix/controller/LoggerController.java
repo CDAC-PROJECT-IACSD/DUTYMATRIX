@@ -19,7 +19,6 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("/api/logger")
 @AllArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class LoggerController {
 
     private final LoggerService loggerService;

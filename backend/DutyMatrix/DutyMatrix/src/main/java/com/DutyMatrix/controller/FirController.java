@@ -30,7 +30,6 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("/fir")
 @AllArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class FirController {
 
     private final FirFileService firService;

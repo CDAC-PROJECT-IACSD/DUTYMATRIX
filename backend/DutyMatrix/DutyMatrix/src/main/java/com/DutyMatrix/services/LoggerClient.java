@@ -3,6 +3,7 @@ package com.DutyMatrix.services;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -14,10 +15,12 @@ public class LoggerClient {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    @Value("${LOGGER_URL:http://localhost:5237/api/logger/log}")
+    private String loggerUrl;
+
     public void logAction(String actionType, String description, Long userId) {
         try {
-            String envUrl = System.getenv("LOGGER_URL");
-            String url = (envUrl != null && !envUrl.isEmpty()) ? envUrl + "/api/logger/log" : "http://localhost:5237/api/logger/log";
+            String url = loggerUrl;
 
             Map<String, Object> body = new HashMap<>();
             body.put("hactionType", actionType);

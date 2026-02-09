@@ -21,7 +21,6 @@ import com.DutyMatrix.services.LoggerClient;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
-@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/users")
 @AllArgsConstructor

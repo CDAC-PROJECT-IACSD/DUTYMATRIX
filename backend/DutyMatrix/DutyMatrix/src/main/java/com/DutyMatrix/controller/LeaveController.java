@@ -25,7 +25,6 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("/leave")
 @AllArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class LeaveController {
 
     private final LeaveService leaveService;
