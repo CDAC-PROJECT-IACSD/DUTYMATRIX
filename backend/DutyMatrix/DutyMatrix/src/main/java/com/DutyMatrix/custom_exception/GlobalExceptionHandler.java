@@ -36,6 +36,7 @@ public class GlobalExceptionHandler {
 	
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<?> handleException(Exception e){
+		e.printStackTrace(); // ✅ PRINTS ERROR TO RENDER LOGS
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),"Error Occured"));
 	}
 	
