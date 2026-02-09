@@ -9,7 +9,7 @@ export default function VerifyOtpReset() {
 
   const resetPassword = async () => {
     try {
-      await axios.post("http://localhost:9090/auth/verify-otp", {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:9090"}/auth/verify-otp`, {
         email,
         otp,
         newPassword: password,

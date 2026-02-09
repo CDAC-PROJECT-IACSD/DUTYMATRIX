@@ -18,7 +18,7 @@ export default function LeaveApproval() {
 
     try {
       const res = await axios.get(
-        "http://localhost:9090/leave/pending/station",
+        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:9090"}/leave/pending/station`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -43,7 +43,7 @@ export default function LeaveApproval() {
   const approveLeave = async (leaveId) => {
     try {
       await axios.put(
-        `http://localhost:9090/leave/approve/${leaveId}`,
+        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:9090"}/leave/approve/${leaveId}`,
         {},
         {
           headers: {
@@ -64,7 +64,7 @@ export default function LeaveApproval() {
   const rejectLeave = async (leaveId) => {
     try {
       await axios.put(
-        `http://localhost:9090/leave/reject/${leaveId}`,
+        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:9090"}/leave/reject/${leaveId}`,
         {},
         {
           headers: {

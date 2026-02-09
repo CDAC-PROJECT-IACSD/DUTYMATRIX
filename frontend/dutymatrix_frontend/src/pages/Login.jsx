@@ -439,7 +439,7 @@ export default function Login() {
     setSuccess("");
 
     try {
-      const res = await axios.post("http://localhost:9090/auth/login", {
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:9090"}/auth/login`, {
         email: loginData.email,
         password: loginData.password,
       });
@@ -470,7 +470,7 @@ export default function Login() {
     setSuccess("");
 
     try {
-      await axios.post("http://localhost:9090/users/signup", {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:9090"}/users/signup`, {
         ...signupData,
         station_id: Number(signupData.station_id),
         urank: signupData.urank.toUpperCase(),
@@ -501,7 +501,7 @@ export default function Login() {
       }
 
       await axios.post(
-        "http://localhost:9090/auth/reset-password",
+        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:9090"}/auth/reset-password`,
         { newPassword },
         { headers: { Authorization: `Bearer ${token}` } }
       );

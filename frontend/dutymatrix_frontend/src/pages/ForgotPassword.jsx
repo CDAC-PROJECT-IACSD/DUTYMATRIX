@@ -22,7 +22,7 @@ export default function ForgotPassword({ onOtpSent, onBack }) {
       setMsg("");
 
       await axios.post(
-        "http://localhost:9090/auth/forgot-password",
+        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:9090"}/auth/forgot-password`,
         null,
         { params: { email } }
       );
@@ -50,7 +50,7 @@ export default function ForgotPassword({ onOtpSent, onBack }) {
       setLoading(true);
       setMsg("");
 
-      await axios.post("http://localhost:9090/auth/verify-otp", {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:9090"}/auth/verify-otp`, {
         email,
         otp,
         newPassword,

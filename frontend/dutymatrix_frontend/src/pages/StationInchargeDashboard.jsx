@@ -54,8 +54,8 @@ export default function StationInchargeDashboard() {
       };
 
       const [firsRes, officersRes] = await Promise.all([
-        axios.get("http://localhost:9090/fir/station-incharge", config),
-        axios.get("http://localhost:9090/users/station-incharge/officers", config),
+        axios.get(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:9090"}/fir/station-incharge`, config),
+        axios.get(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:9090"}/users/station-incharge/officers`, config),
       ]);
 
       setFirs(firsRes.data);
@@ -73,7 +73,7 @@ export default function StationInchargeDashboard() {
 
     try {
       await axios.put(
-        `http://localhost:9090/fir/${firId}/assign`,
+        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:9090"}/fir/${firId}/assign`,
         null,
         {
           params: { officerId: selectedOfficer },

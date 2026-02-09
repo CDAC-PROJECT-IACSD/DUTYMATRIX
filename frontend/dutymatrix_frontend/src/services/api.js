@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Create Axios instance
 const API = axios.create({
-  baseURL: "http://localhost:9090",
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:9090",
   headers: {
     "Content-Type": "application/json",
   },
@@ -103,7 +103,7 @@ export const assignInvestigatingOfficer = async (firId, officerId) => {
 // Get notifications of logged-in user
 export const getNotifications = async (userId) => {
   const res = await API.get(
-    `http://localhost:4000/api/notifications/user/${userId}`
+    `${import.meta.env.VITE_NOTIFICATION_URL || "http://localhost:4000"}/api/notifications/user/${userId}`
   );
   return res.data;
 };
